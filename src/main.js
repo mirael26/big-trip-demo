@@ -8,6 +8,12 @@ import {createEventEditTemplate} from "./view/event-edit.js";
 import {createEventListTemplate} from "./view/event-list.js";
 import {createEventDayTemplate} from "./view/event-day.js";
 import {createEventTemplate} from "./view/event.js";
+import {generateEvent} from "./mock/event.js";
+
+// console.log(generateEvent());
+
+const EVENT_COUNT = 8;
+const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 
 const render = (containter, template, place) => {
   containter.insertAdjacentHTML(place, template);
@@ -41,6 +47,6 @@ render(eventListElement, createEventDayTemplate(), `beforeend`);
 
 const dayListElement = eventListElement.querySelector(`.trip-events__list`);
 
-render(dayListElement, createEventTemplate(), `beforeend`);
-render(dayListElement, createEventTemplate(), `beforeend`);
-render(dayListElement, createEventTemplate(), `beforeend`);
+for (let i = 0; i < EVENT_COUNT; i++) {
+  render(dayListElement, createEventTemplate(events[i]), `beforeend`);
+}
