@@ -10,10 +10,9 @@ import {createEventDayTemplate} from "./view/event-day.js";
 import {createEventTemplate} from "./view/event.js";
 import {generateEvent} from "./mock/event.js";
 
-// console.log(generateEvent());
-
 const EVENT_COUNT = 8;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
+console.log(events);
 
 const render = (containter, template, place) => {
   containter.insertAdjacentHTML(place, template);

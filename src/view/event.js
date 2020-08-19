@@ -1,6 +1,35 @@
 export const createEventTemplate = (event) => {
-  const {type, destination} = event;
+  const {type, destination, startDate, endDate} = event;
   const preposition = (type === `Check-in` || type === `Sightseeing` || type === `Restaurant`) ? `in` : `to`;
+
+  const completeNubmer = (number) => {
+    return (`0` + number.toString()).slice(-2);
+  };
+
+  const startTimeHours = completeNubmer(startDate.getHours());
+  const startTimeMinutes = completeNubmer(startDate.getMinutes());
+  const endTimeHours = completeNubmer(endDate.getHours());
+  const endTimeMinutes = completeNubmer(endDate.getMinutes());
+  const duration = (endDate - startDate);
+
+  const convertDuration = (millisec) => {
+    let minutes = (millisec / (1000 * 60)).toFixed(0);
+    let hours = completeNubmer(Math.floor(minutes / 60));
+    let days = ``;
+    if (hours >= 24) {
+      days = completeNubmer(Math.floor(hours / 24));
+      hours = hours - (days * 24);
+    }
+
+    minutes = completeNubmer(Math.floor(minutes % 60));
+    if (days !== ``) {
+      return days + `D ` + hours + `H ` + minutes + `M`;
+    } else if (hours > 0) {
+      return hours + `H ` + minutes + `M`;
+    }
+    return minutes + `M`;
+  };
+
 
   return (
     `<li class="trip-events__item">
@@ -12,11 +41,11 @@ export const createEventTemplate = (event) => {
 
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+          <time class="event__start-time" datetime="${startDate.toISOString()}">${startTimeHours}:${startTimeMinutes}</time>
           &mdash;
-          <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+          <time class="event__end-time" datetime="${endDate.toISOString()}">${endTimeHours}:${endTimeMinutes}</time>
         </p>
-        <p class="event__duration">30M</p>
+        <p class="event__duration">${convertDuration(duration)}</p>
       </div>
 
       <p class="event__price">
