@@ -12,7 +12,24 @@ import {generateEvent} from "./mock/event.js";
 
 const EVENT_COUNT = 8;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
-console.log(events);
+const eventsInOrder = events.sort((a, b) => {
+  return a.startDate - b.startDate;
+});
+
+const convertDay = (day) => {
+  return day.toLocaleString(`en-US`, {year: `numeric`, month: `short`, day: `numeric`}).toUpperCase();
+};
+const days = eventsInOrder.map((object) => {
+  return convertDay(object.startDate);
+});
+const daysUniq = Array.from(new Set(days));
+
+const eventsByDays = new Map();
+daysUniq.forEach((day) => {
+  eventsByDays.set(day, events.filter((event) => {
+    return convertDay(event.startDate) === day;
+  }));
+});
 
 const render = (containter, template, place) => {
   containter.insertAdjacentHTML(place, template);
@@ -42,10 +59,15 @@ render(boardElement, createEventListTemplate(), `beforeend`);
 
 const eventListElement = boardElement.querySelector(`.trip-days`);
 
-render(eventListElement, createEventDayTemplate(), `beforeend`);
+let mapIndex = 0;
+eventsByDays.forEach((value, key) => {
+  mapIndex++;
+  render(eventListElement, createEventDayTemplate(key, mapIndex), `beforeend`);
 
-const dayListElement = eventListElement.querySelector(`.trip-events__list`);
+  const dayListElements = eventListElement.querySelectorAll(`.trip-events__list`);
+  const currentDayListElement = dayListElements[dayListElements.length - 1];
 
-for (let i = 0; i < EVENT_COUNT; i++) {
-  render(dayListElement, createEventTemplate(events[i]), `beforeend`);
-}
+  value.forEach((event) => {
+    render(currentDayListElement, createEventTemplate(event), `beforeend`);
+  });
+});
