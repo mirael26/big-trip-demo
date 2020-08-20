@@ -1,5 +1,5 @@
 export const createEventTemplate = (event) => {
-  const {type, destination, startDate, endDate} = event;
+  const {type, destination, startDate, endDate, price, offers} = event;
   const preposition = (type === `Check-in` || type === `Sightseeing` || type === `Restaurant`) ? `in` : `to`;
 
   const completeNubmer = (number) => {
@@ -30,6 +30,16 @@ export const createEventTemplate = (event) => {
     return minutes + `M`;
   };
 
+  const createEventOffersTemplate = (offersArray) => {
+    return offersArray.slice(0, 3).map((option) =>
+      `<li class="event__offer">
+        <span class="event__offer-title">${option.name}</span>
+        &plus;
+        &euro;&nbsp;<span class="event__offer-price">${option.price}</span>
+        </li>`
+    ).join(``);
+  };
+  const offersTemplate = createEventOffersTemplate(offers);
 
   return (
     `<li class="trip-events__item">
@@ -49,16 +59,12 @@ export const createEventTemplate = (event) => {
       </div>
 
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">20</span>
+        &euro;&nbsp;<span class="event__price-value">${price}</span>
       </p>
 
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">Order Uber</span>
-          &plus;
-          &euro;&nbsp;<span class="event__offer-price">20</span>
-         </li>
+      ${offersTemplate}
       </ul>
 
       <button class="event__rollup-btn" type="button">

@@ -1,4 +1,4 @@
-import {EVENT_TYPES, DESTINATIONS, EVENT_DESCRIPTIONS} from "../const.js";
+import {EVENT_TYPES, DESTINATIONS, EVENT_DESCRIPTIONS, OFFERS} from "../const.js";
 import {getRandomInteger, getRandomElement} from "../util.js";
 
 const DESCRIPTION_COUNT_MIN = 0;
@@ -10,6 +10,10 @@ const DAYS_MAX = 5;
 const TIME_HOURS_MIN = 9;
 const TIME_HOURS_MAX = 20;
 const TIME_MINUTES_STEP = 5;
+const PRICE_MIN = 200;
+const PRICE_MAX = 600;
+const OPTIONS_MIN = 0;
+const OPTIONS_MAX = 4;
 
 const generateDate = () => {
   const daysGap = getRandomInteger(DAYS_MIN, DAYS_MAX);
@@ -43,6 +47,12 @@ export const generateEvent = () => {
   });
 
   const days = generateDate();
+  const price = Math.round(getRandomInteger(PRICE_MIN, PRICE_MAX) / 10) * 10;
+
+  const offersCount = getRandomInteger(OPTIONS_MIN, OPTIONS_MAX);
+  const offers = new Array(offersCount).fill().map(() => {
+    return getRandomElement(OFFERS);
+  });
 
   return {
     type: getRandomElement(EVENT_TYPES),
@@ -52,6 +62,8 @@ export const generateEvent = () => {
       photo,
     },
     startDate: days[0],
-    endDate: days[1]
+    endDate: days[1],
+    price,
+    offers,
   };
 };
