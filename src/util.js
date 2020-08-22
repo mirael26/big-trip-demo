@@ -10,8 +10,9 @@ const getRandomElement = (array) => {
   return array[randomIndex];
 };
 
-const isEventFirst = () => {
+const isBoardEmpty = () => {
   const eventContainer = document.querySelector(`.trip-days`);
+  console.log(eventContainer.innerHTML);
   return eventContainer.innerHTML === ``;
 };
 
@@ -29,4 +30,4 @@ const completeDateNubmer = (number) => {
   return (`0` + number.toString()).slice(-2);
 };
 
-export {getRandomInteger, getRandomElement, isEventFirst, getPreposition, getCurrentDate, completeDateNubmer};
+export {getRandomInteger, getRandomElement, isBoardEmpty, getPreposition, getCurrentDate, completeDateNubmer};

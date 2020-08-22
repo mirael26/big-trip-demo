@@ -53,7 +53,7 @@ render(menuElement, createFilterTemplate(), `beforeend`);
 const siteMainElement = document.querySelector(`.page-body__page-main`);
 const boardElement = siteMainElement.querySelector(`.trip-events`);
 
-render(boardElement, createSortTemplate(), `beforeend`);
+
 render(boardElement, createEventFormTemplate(events[0]), `beforeend`);
 render(boardElement, createEventListTemplate(), `beforeend`);
 
@@ -71,3 +71,5 @@ eventsByDays.forEach((value, key) => {
     render(currentDayListElement, createEventTemplate(event), `beforeend`);
   });
 });
+
+render(boardElement, createSortTemplate(), `afterbegin`);
