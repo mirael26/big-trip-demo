@@ -10,10 +10,8 @@ const getRandomElement = (array) => {
   return array[randomIndex];
 };
 
-const isBoardEmpty = () => {
-  const eventContainer = document.querySelector(`.trip-days`);
-  console.log(eventContainer.innerHTML);
-  return eventContainer.innerHTML === ``;
+const isNoEvents = (events) => {
+  return events.length === 0;
 };
 
 const getPreposition = (type) => {
@@ -26,8 +24,12 @@ const getCurrentDate = () => {
   return new Date(currentDate);
 };
 
+const getShortDate = (date) => {
+  return date.toLocaleString(`en-US`, {month: `short`, day: `numeric`}).toUpperCase();
+};
+
 const completeDateNubmer = (number) => {
   return (`0` + number.toString()).slice(-2);
 };
 
-export {getRandomInteger, getRandomElement, isBoardEmpty, getPreposition, getCurrentDate, completeDateNubmer};
+export {getRandomInteger, getRandomElement, isNoEvents, getPreposition, getCurrentDate, completeDateNubmer, getShortDate};

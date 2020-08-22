@@ -1,6 +1,8 @@
+import {getShortDate} from "../util.js";
+
 export const createEventDayTemplate = (day, index) => {
   const date = new Date(day);
-  const dateShort = date.toLocaleString(`en-US`, {month: `short`, day: `numeric`}).toUpperCase();
+  const dateShort = getShortDate(date);
 
   return (
     `<li class="trip-days__item  day">
