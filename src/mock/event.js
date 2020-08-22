@@ -54,8 +54,10 @@ export const generateEvent = () => {
     return getRandomElement(OFFERS);
   });
 
+  const allEventTypes = EVENT_TYPES.transfer.concat(EVENT_TYPES.activity);
+
   return {
-    type: getRandomElement(EVENT_TYPES),
+    type: getRandomElement(allEventTypes),
     destination: getRandomElement(DESTINATIONS),
     destinationInfo: {
       description,

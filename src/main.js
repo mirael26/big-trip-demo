@@ -4,7 +4,7 @@ import {createTripCostTemplate} from "./view/trip-cost.js";
 import {createSiteMenuTemplate} from "./view/site-menu.js";
 import {createFilterTemplate} from "./view/filter.js";
 import {createSortTemplate} from "./view/sort.js";
-import {createEventEditTemplate} from "./view/event-edit.js";
+import {createEventFormTemplate} from "./view/event-form.js";
 import {createEventListTemplate} from "./view/event-list.js";
 import {createEventDayTemplate} from "./view/event-day.js";
 import {createEventTemplate} from "./view/event.js";
@@ -12,7 +12,7 @@ import {generateEvent} from "./mock/event.js";
 
 const EVENT_COUNT = 8;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
-const eventsInOrder = events.sort((a, b) => {
+const eventsInOrder = events.slice(1).sort((a, b) => {
   return a.startDate - b.startDate;
 });
 
@@ -54,7 +54,7 @@ const siteMainElement = document.querySelector(`.page-body__page-main`);
 const boardElement = siteMainElement.querySelector(`.trip-events`);
 
 render(boardElement, createSortTemplate(), `beforeend`);
-render(boardElement, createEventEditTemplate(), `beforeend`);
+render(boardElement, createEventFormTemplate(events[0]), `beforeend`);
 render(boardElement, createEventListTemplate(), `beforeend`);
 
 const eventListElement = boardElement.querySelector(`.trip-days`);

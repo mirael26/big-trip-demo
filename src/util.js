@@ -10,4 +10,23 @@ const getRandomElement = (array) => {
   return array[randomIndex];
 };
 
-export {getRandomInteger, getRandomElement};
+const isEventFirst = () => {
+  const eventContainer = document.querySelector(`.trip-days`);
+  return eventContainer.innerHTML === ``;
+};
+
+const getPreposition = (type) => {
+  return (type === `Check-in` || type === `Sightseeing` || type === `Restaurant`) ? `in` : `to`;
+};
+
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  return new Date(currentDate);
+};
+
+const completeDateNubmer = (number) => {
+  return (`0` + number.toString()).slice(-2);
+};
+
+export {getRandomInteger, getRandomElement, isEventFirst, getPreposition, getCurrentDate, completeDateNubmer};

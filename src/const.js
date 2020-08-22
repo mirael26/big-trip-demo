@@ -1,4 +1,7 @@
-const EVENT_TYPES = [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`, `Check-in`, `Sightseeing`, `Restaurant`];
+const EVENT_TYPES = {
+  transfer: [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`],
+  activity: [`Check-in`, `Sightseeing`, `Restaurant`]
+};
 const DESTINATIONS = [`Amsterdam`, `Chamonix`, `Geneva`, `London`, `Prague`, `Oslo`, `Bergen`];
 const EVENT_DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
@@ -10,52 +13,62 @@ const EVENT_DESCRIPTIONS = [
 const OFFERS = [
   {
     type: `transport`,
-    name: `Order Uber`,
+    name: `uber`,
+    text: `Order Uber`,
     price: `20`,
   },
   {
     type: `hotel`,
-    name: `Add luggage`,
+    name: `luggage`,
+    text: `Add luggage`,
     price: `50`,
   },
   {
     type: `transport`,
-    name: `Rent a car`,
+    name: `car`,
+    text: `Rent a car`,
     price: `200`,
   },
   {
     type: `food`,
-    name: `Add breakfast`,
+    name: `breakfast`,
+    text: `Add breakfast`,
     price: `50`,
   },
   {
     type: `transport`,
-    name: `Book tickets`,
+    name: `tickets`,
+    text: `Book tickets`,
     price: `40`,
   },
   {
     type: `food`,
-    name: `Lunch in city`,
+    name: `lunch`,
+    text: `Lunch in city`,
     price: `30`,
   },
   {
     type: `hotel`,
-    name: `Switch to comfort`,
+    name: `comfort`,
+    text: `Switch to comfort`,
     price: `80`,
   },
   {
     type: `food`,
-    name: `Add meal`,
+    name: `meal`,
+    text: `Add meal`,
     price: `15`,
   },
   {
     type: `transport`,
-    name: `Travel by train`,
+    name: `train`,
+    text: `Travel by train`,
     price: `40`,
   },
   {
     type: `transport`,
-    name: `Choose seats`,
+    name: `seats`,
+    text: `Choose seats`,
     price: `5`,
   },
 ];

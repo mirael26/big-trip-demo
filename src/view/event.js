@@ -1,27 +1,24 @@
+import {getPreposition, completeDateNubmer} from "../util.js";
+
 export const createEventTemplate = (event) => {
   const {type, destination, startDate, endDate, price, offers} = event;
-  const preposition = (type === `Check-in` || type === `Sightseeing` || type === `Restaurant`) ? `in` : `to`;
 
-  const completeNubmer = (number) => {
-    return (`0` + number.toString()).slice(-2);
-  };
-
-  const startTimeHours = completeNubmer(startDate.getHours());
-  const startTimeMinutes = completeNubmer(startDate.getMinutes());
-  const endTimeHours = completeNubmer(endDate.getHours());
-  const endTimeMinutes = completeNubmer(endDate.getMinutes());
+  const startTimeHours = completeDateNubmer(startDate.getHours());
+  const startTimeMinutes = completeDateNubmer(startDate.getMinutes());
+  const endTimeHours = completeDateNubmer(endDate.getHours());
+  const endTimeMinutes = completeDateNubmer(endDate.getMinutes());
   const duration = (endDate - startDate);
 
   const convertDuration = (millisec) => {
     let minutes = (millisec / (1000 * 60)).toFixed(0);
-    let hours = completeNubmer(Math.floor(minutes / 60));
+    let hours = completeDateNubmer(Math.floor(minutes / 60));
     let days = ``;
     if (hours >= 24) {
-      days = completeNubmer(Math.floor(hours / 24));
+      days = completeDateNubmer(Math.floor(hours / 24));
       hours = hours - (days * 24);
     }
 
-    minutes = completeNubmer(Math.floor(minutes % 60));
+    minutes = completeDateNubmer(Math.floor(minutes % 60));
     if (days !== ``) {
       return days + `D ` + hours + `H ` + minutes + `M`;
     } else if (hours > 0) {
@@ -33,7 +30,7 @@ export const createEventTemplate = (event) => {
   const createEventOffersTemplate = (offersArray) => {
     return offersArray.slice(0, 3).map((option) =>
       `<li class="event__offer">
-        <span class="event__offer-title">${option.name}</span>
+        <span class="event__offer-title">${option.text}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${option.price}</span>
         </li>`
@@ -47,7 +44,7 @@ export const createEventTemplate = (event) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${preposition} ${destination}</h3>
+      <h3 class="event__title">${type} ${getPreposition(type)} ${destination}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
