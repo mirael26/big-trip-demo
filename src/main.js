@@ -9,14 +9,12 @@ import {createEventListTemplate} from "./view/event-list.js";
 import {createEventDayTemplate} from "./view/event-day.js";
 import {createEventTemplate} from "./view/event.js";
 import {generateEvent} from "./mock/event.js";
-// import {isNoEvents} from "./util.js";
 
 const EVENT_COUNT = 8;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 const eventsInOrder = events.slice(1).sort((a, b) => {
   return a.startDate - b.startDate;
 });
-console.log(eventsInOrder);
 
 const convertDay = (day) => {
   return day.toLocaleString(`en-US`, {year: `numeric`, month: `short`, day: `numeric`}).toUpperCase();
@@ -44,7 +42,7 @@ render(siteHeaderElement, createTripInfoContainerTemplate(), `afterbegin`);
 const tripInfoElement = siteHeaderElement.querySelector(`.trip-main__trip-info`);
 
 render(tripInfoElement, createTripInfoTemplate(eventsInOrder), `afterbegin`);
-render(tripInfoElement, createTripCostTemplate(), `beforeend`);
+render(tripInfoElement, createTripCostTemplate(eventsInOrder), `beforeend`);
 
 const menuElement = siteHeaderElement.querySelector(`.trip-main__trip-controls`);
 const menuTitleElement = menuElement.querySelector(`.trip-main__trip-controls h2:first-of-type`);
