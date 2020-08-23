@@ -1,32 +1,67 @@
-export const createEventTemplate = () => {
+import {getPreposition, completeDateNubmer} from "../util.js";
+
+export const createEventTemplate = (event) => {
+  const {type, destination, startDate, endDate, price, offers} = event;
+
+  const startTimeHours = completeDateNubmer(startDate.getHours());
+  const startTimeMinutes = completeDateNubmer(startDate.getMinutes());
+  const endTimeHours = completeDateNubmer(endDate.getHours());
+  const endTimeMinutes = completeDateNubmer(endDate.getMinutes());
+  const duration = (endDate - startDate);
+
+  const convertDuration = (millisec) => {
+    let minutes = (millisec / (1000 * 60)).toFixed(0);
+    let hours = completeDateNubmer(Math.floor(minutes / 60));
+    let days = ``;
+    if (hours >= 24) {
+      days = completeDateNubmer(Math.floor(hours / 24));
+      hours = hours - (days * 24);
+    }
+
+    minutes = completeDateNubmer(Math.floor(minutes % 60));
+    if (days !== ``) {
+      return days + `D ` + hours + `H ` + minutes + `M`;
+    } else if (hours > 0) {
+      return hours + `H ` + minutes + `M`;
+    }
+    return minutes + `M`;
+  };
+
+  const createEventOffersTemplate = (offersArray) => {
+    return offersArray.slice(0, 3).map((option) =>
+      `<li class="event__offer">
+        <span class="event__offer-title">${option.text}</span>
+        &plus;
+        &euro;&nbsp;<span class="event__offer-price">${option.price}</span>
+        </li>`
+    ).join(``);
+  };
+  const offersTemplate = createEventOffersTemplate(offers);
+
   return (
     `<li class="trip-events__item">
     <div class="event">
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/taxi.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">Taxi to Amsterdam</h3>
+      <h3 class="event__title">${type} ${getPreposition(type)} ${destination}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T10:30">10:30</time>
+          <time class="event__start-time" datetime="${startDate.toISOString()}">${startTimeHours}:${startTimeMinutes}</time>
           &mdash;
-          <time class="event__end-time" datetime="2019-03-18T11:00">11:00</time>
+          <time class="event__end-time" datetime="${endDate.toISOString()}">${endTimeHours}:${endTimeMinutes}</time>
         </p>
-        <p class="event__duration">30M</p>
+        <p class="event__duration">${convertDuration(duration)}</p>
       </div>
 
       <p class="event__price">
-        &euro;&nbsp;<span class="event__price-value">20</span>
+        &euro;&nbsp;<span class="event__price-value">${price}</span>
       </p>
 
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">Order Uber</span>
-          &plus;
-          &euro;&nbsp;<span class="event__offer-price">20</span>
-         </li>
+      ${offersTemplate}
       </ul>
 
       <button class="event__rollup-btn" type="button">
