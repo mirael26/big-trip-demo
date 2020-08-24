@@ -2,7 +2,7 @@ const EVENT_TYPES = {
   transfer: [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`],
   activity: [`Check-in`, `Sightseeing`, `Restaurant`]
 };
-const DESTINATIONS = [`Amsterdam`, `Chamonix`, `Geneva`, `London`, `Prague`, `Oslo`, `Bergen`];
+const DESTINATIONS = [`Amsterdam`, `Geneva`, `Chamonix`, `Saint Petersburg`];
 const EVENT_DESCRIPTIONS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,

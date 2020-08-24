@@ -22,7 +22,7 @@ const convertDay = (day) => {
 const days = eventsInOrder.map((object) => {
   return convertDay(object.startDate);
 });
-const daysUniq = Array.from(new Set(days));
+const daysUniq = new Set(days);
 
 const eventsByDays = new Map();
 daysUniq.forEach((day) => {

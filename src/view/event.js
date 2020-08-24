@@ -20,11 +20,11 @@ export const createEventTemplate = (event) => {
 
     minutes = completeDateNubmer(Math.floor(minutes % 60));
     if (days !== ``) {
-      return days + `D ` + hours + `H ` + minutes + `M`;
+      return `${days}D ${hours}H ${minutes}M`;
     } else if (hours > 0) {
-      return hours + `H ` + minutes + `M`;
+      return `${hours}H ${minutes}M`;
     }
-    return minutes + `M`;
+    return `${minutes}M`;
   };
 
   const createEventOffersTemplate = (offersArray) => {

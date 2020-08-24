@@ -1,5 +1,5 @@
 import {getPreposition, getCurrentDate, completeDateNubmer} from "../util.js";
-import {EVENT_TYPES} from "../const.js";
+import {EVENT_TYPES, DESTINATIONS} from "../const.js";
 
 const createEventFormTypeTemplate = (type) => {
   return `<div class="event__type-wrapper">
@@ -10,21 +10,15 @@ const createEventFormTypeTemplate = (type) => {
   <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
   <div class="event__type-list">
-    <fieldset class="event__type-group">
-      <legend class="visually-hidden">Transfer</legend>
-      ${EVENT_TYPES.transfer.map((eventType) => `<div class="event__type-item">
-        <input id="event-type-${eventType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType.toLowerCase()}">
-        <label class="event__type-label  event__type-label--${eventType.toLowerCase()}" for="event-type-${eventType.toLowerCase()}-1">${eventType}</label>
-        </div>`).join(``)}
-    </fieldset>
+    ${Object.keys(EVENT_TYPES).map((key) => `<fieldset class="event__type-group">
+    <legend class="visually-hidden">${key}</legend>
 
-    <fieldset class="event__type-group">
-      <legend class="visually-hidden">Activity</legend>
-      ${EVENT_TYPES.activity.map((eventType) => `<div class="event__type-item">
-        <input id="event-type-${eventType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType.toLowerCase()}">
-        <label class="event__type-label  event__type-label--${eventType.toLowerCase()}" for="event-type-${eventType.toLowerCase()}-1">${eventType}</label>
-        </div>`).join(``)}
-    </fieldset>
+    ${EVENT_TYPES[key].map((eventType) => `<div class="event__type-item">
+      <input id="event-type-${eventType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType.toLowerCase()}">
+      <label class="event__type-label  event__type-label--${eventType.toLowerCase()}" for="event-type-${eventType.toLowerCase()}-1">${eventType}</label>
+      </div>`).join(``)}
+  </fieldset>`).join(``)}
+
   </div>
 </div>`;
 };
@@ -89,10 +83,7 @@ export const createEventFormTemplate = (event) => {
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=" ${destination}" list="destination-list-1">
         <datalist id="destination-list-1">
-          <option value="Amsterdam"></option>
-          <option value="Geneva"></option>
-          <option value="Chamonix"></option>
-          <option value="Saint Petersburg"></option>
+          ${DESTINATIONS.map((city) => `<option value="${city}"></option>`)}
         </datalist>
       </div>
 
