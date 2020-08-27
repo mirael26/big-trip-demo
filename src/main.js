@@ -10,11 +10,11 @@ import EventDayView from "./view/event-day.js";
 import EventDayListView from "./view/event-day-list.js";
 import EventView from "./view/event.js";
 import {generateEvent} from "./mock/event.js";
-import {renderTemplate, render, createElement} from "./util.js";
+import {render} from "./util.js";
 
 const EVENT_COUNT = 8;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
-const eventsInOrder = events.slice(1).sort((a, b) => {
+const eventsInOrder = events.slice().sort((a, b) => {
   return a.startDate - b.startDate;
 });
 
@@ -32,6 +32,30 @@ daysUniq.forEach((day) => {
     return convertDay(event.startDate) === day;
   }));
 });
+
+const renderEvent = (eventList, event) => {
+  const eventComponent = new EventView(event);
+  const eventEditComponent = new EventEditView(event);
+
+  const replaceEventToForm = () => {
+    eventList.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+  };
+
+  const replaceFormToEvent = () => {
+    eventList.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  };
+
+  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceEventToForm();
+  });
+
+  eventEditComponent.getElement().addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceFormToEvent();
+  });
+
+  render(eventList, eventComponent.getElement(), `beforeend`);
+};
 
 const siteHeaderElement = document.querySelector(`.trip-main`);
 
@@ -54,7 +78,6 @@ const siteMainElement = document.querySelector(`.page-body__page-main`);
 const boardElement = siteMainElement.querySelector(`.trip-events`);
 
 render(boardElement, new SortView(events).getElement(), `afterbegin`);
-render(boardElement, new EventEditView(events[0]).getElement(), `beforeend`);
 
 const eventListComponent = new EventListView();
 render(boardElement, eventListComponent.getElement(), `beforeend`);
@@ -70,7 +93,7 @@ if (events.length !== 0) {
     render(eventDayComponent.getElement(), eventDayListComponent.getElement(), `beforeend`);
 
     value.forEach((event) => {
-      render(eventDayListComponent.getElement(), new EventView(event).getElement(), `beforeend`);
+      renderEvent(eventDayListComponent.getElement(), event);
     });
   });
 }
