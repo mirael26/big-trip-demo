@@ -1,14 +1,16 @@
-import {createTripInfoContainerTemplate} from "./view/trip-info-container.js";
-import {createTripInfoTemplate} from "./view/trip-info.js";
-import {createTripCostTemplate} from "./view/trip-cost.js";
-import {createSiteMenuTemplate} from "./view/site-menu.js";
-import {createFilterTemplate} from "./view/filter.js";
-import {createSortTemplate} from "./view/sort.js";
-import {createEventFormTemplate} from "./view/event-form.js";
-import {createEventListTemplate} from "./view/event-list.js";
-import {createEventDayTemplate} from "./view/event-day.js";
-import {createEventTemplate} from "./view/event.js";
+import TripInfoContainerView from "./view/trip-info-container.js";
+import TripInfoView from "./view/trip-info.js";
+import TripCostView from "./view/trip-cost.js";
+import SiteMenuView from "./view/site-menu.js";
+import FilterView from "./view/filter.js";
+import SortView from "./view/sort.js";
+import EventEditView from "./view/event-edit.js";
+import EventListView from "./view/event-list.js";
+import EventDayView from "./view/event-day.js";
+import EventDayListView from "./view/event-day-list.js";
+import EventView from "./view/event.js";
 import {generateEvent} from "./mock/event.js";
+import {renderTemplate, render, createElement} from "./util.js";
 
 const EVENT_COUNT = 8;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
@@ -31,45 +33,44 @@ daysUniq.forEach((day) => {
   }));
 });
 
-const render = (containter, template, place) => {
-  containter.insertAdjacentHTML(place, template);
-};
-
 const siteHeaderElement = document.querySelector(`.trip-main`);
 
-render(siteHeaderElement, createTripInfoContainerTemplate(), `afterbegin`);
+const TripInfoContainerComponent = new TripInfoContainerView();
+render(siteHeaderElement, TripInfoContainerComponent.getElement(), `afterbegin`);
 
-const tripInfoElement = siteHeaderElement.querySelector(`.trip-main__trip-info`);
-
-render(tripInfoElement, createTripInfoTemplate(eventsInOrder), `afterbegin`);
-render(tripInfoElement, createTripCostTemplate(eventsInOrder), `beforeend`);
+render(TripInfoContainerComponent.getElement(), new TripInfoView(eventsInOrder).getElement(), `afterbegin`);
+render(TripInfoContainerComponent.getElement(), new TripCostView(eventsInOrder).getElement(), `beforeend`);
 
 const menuElement = siteHeaderElement.querySelector(`.trip-main__trip-controls`);
-const menuTitleElement = menuElement.querySelector(`.trip-main__trip-controls h2:first-of-type`);
 
-render(menuTitleElement, createSiteMenuTemplate(), `afterend`);
-render(menuElement, createFilterTemplate(), `beforeend`);
+render(menuElement, new SiteMenuView().getElement(), `afterbegin`);
+
+const menuTitleElement = menuElement.querySelector(`.trip-main__trip-controls h2:first-of-type`);
+menuElement.prepend(menuTitleElement);
+
+render(menuElement, new FilterView().getElement(), `beforeend`);
 
 const siteMainElement = document.querySelector(`.page-body__page-main`);
 const boardElement = siteMainElement.querySelector(`.trip-events`);
 
-render(boardElement, createSortTemplate(events), `afterbegin`);
-render(boardElement, createEventFormTemplate(events[0]), `beforeend`);
-render(boardElement, createEventListTemplate(), `beforeend`);
+render(boardElement, new SortView(events).getElement(), `afterbegin`);
+render(boardElement, new EventEditView(events[0]).getElement(), `beforeend`);
 
-const eventListElement = boardElement.querySelector(`.trip-days`);
+const eventListComponent = new EventListView();
+render(boardElement, eventListComponent.getElement(), `beforeend`);
 
 if (events.length !== 0) {
   let mapIndex = 0;
   eventsByDays.forEach((value, key) => {
     mapIndex++;
-    render(eventListElement, createEventDayTemplate(key, mapIndex), `beforeend`);
+    const eventDayComponent = new EventDayView(key, mapIndex);
+    render(eventListComponent.getElement(), eventDayComponent.getElement(), `beforeend`);
 
-    const dayListElements = eventListElement.querySelectorAll(`.trip-events__list`);
-    const currentDayListElement = dayListElements[dayListElements.length - 1];
+    const eventDayListComponent = new EventDayListView();
+    render(eventDayComponent.getElement(), eventDayListComponent.getElement(), `beforeend`);
 
     value.forEach((event) => {
-      render(currentDayListElement, createEventTemplate(event), `beforeend`);
+      render(eventDayListComponent.getElement(), new EventView(event).getElement(), `beforeend`);
     });
   });
 }

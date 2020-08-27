@@ -1,6 +1,6 @@
-import {isNoEvents, getShortDate} from "../util.js";
+import {isNoEvents, getShortDate, createElement} from "../util.js";
 
-export const createTripInfoTemplate = (events) => {
+const createTripInfoTemplate = (events) => {
   const destinations = events.map((event) => {
     return event.destination;
   });
@@ -20,3 +20,26 @@ export const createTripInfoTemplate = (events) => {
     </div>`
   );
 };
+
+export default class TripInfo {
+  constructor(events) {
+    this._events = events;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripInfoTemplate(this._events);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

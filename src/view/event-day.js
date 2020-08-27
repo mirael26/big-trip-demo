@@ -1,6 +1,6 @@
-import {getShortDate} from "../util.js";
+import {getShortDate, createElement} from "../util.js";
 
-export const createEventDayTemplate = (day, index) => {
+const createEventDayTemplate = (day, index) => {
   const date = new Date(day);
   const dateShort = getShortDate(date);
 
@@ -11,7 +11,30 @@ export const createEventDayTemplate = (day, index) => {
       <time class="day__date" datetime="${date.toISOString()}">${dateShort}</time>
     </div>
 
-    <ul class="trip-events__list"></ul>
     </li>`
   );
 };
+
+export default class EventDay {
+  constructor(day, index) {
+    this._day = day;
+    this._index = index;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventDayTemplate(this._day, this._index);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

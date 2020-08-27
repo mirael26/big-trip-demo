@@ -1,7 +1,7 @@
-import {getPreposition, getCurrentDate, completeDateNubmer} from "../util.js";
+import {getPreposition, getCurrentDate, completeDateNubmer, createElement} from "../util.js";
 import {EVENT_TYPES, DESTINATIONS} from "../const.js";
 
-const createEventFormTypeTemplate = (type) => {
+const createEventEditTypeTemplate = (type) => {
   return `<div class="event__type-wrapper">
   <label class="event__type  event__type-btn" for="event-type-toggle-1">
     <span class="visually-hidden">Choose event type</span>
@@ -23,7 +23,7 @@ const createEventFormTypeTemplate = (type) => {
 </div>`;
 };
 
-const createEventFormOfferTemplate = (offers) => {
+const createEventEditOfferTemplate = (offers) => {
   return `<section class="event__section  event__section--offers">
   <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -39,7 +39,7 @@ const createEventFormOfferTemplate = (offers) => {
   </section>`;
 };
 
-const createEventFormDestinationTemplate = (destinationInfo) => {
+const createEventEditDestinationTemplate = (destinationInfo) => {
   return destinationInfo === `` ? `` : `<section class="event__section  event__section--destination">
   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
   <p class="event__destination-description">${destinationInfo.description}</p>
@@ -52,12 +52,12 @@ const createEventFormDestinationTemplate = (destinationInfo) => {
 </section>`;
 };
 
-const getEventFormDate = (date) => {
+const getEventEditDate = (date) => {
   return `${completeDateNubmer(date.getDate())}/${completeDateNubmer(date.getMonth())}/${completeDateNubmer(date.getFullYear())}
  ${completeDateNubmer(date.getHours())}:${completeDateNubmer(date.getMinutes())}`;
 };
 
-export const createEventFormTemplate = (event) => {
+const createEventEditTemplate = (event) => {
   const {
     type = `Bus`,
     destination = ``,
@@ -68,9 +68,9 @@ export const createEventFormTemplate = (event) => {
     offers = ``,
   } = event;
 
-  const typeTemplate = createEventFormTypeTemplate(type);
-  const offerTemplate = createEventFormOfferTemplate(offers);
-  const destinationTemplate = createEventFormDestinationTemplate(destinationInfo);
+  const typeTemplate = createEventEditTypeTemplate(type);
+  const offerTemplate = createEventEditOfferTemplate(offers);
+  const destinationTemplate = createEventEditDestinationTemplate(destinationInfo);
 
   return (
     `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -91,12 +91,12 @@ export const createEventFormTemplate = (event) => {
         <label class="visually-hidden" for="event-start-time-1">
           From
         </label>
-        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getEventFormDate(startDate)}">
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getEventEditDate(startDate)}">
         &mdash;
         <label class="visually-hidden" for="event-end-time-1">
           To
         </label>
-        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getEventFormDate(endDate)}">
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getEventEditDate(endDate)}">
       </div>
 
       <div class="event__field-group  event__field-group--price">
@@ -117,3 +117,26 @@ export const createEventFormTemplate = (event) => {
     </form>`
   );
 };
+
+export default class EventEdit {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventEditTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
