@@ -1,6 +1,6 @@
-import {getPreposition, completeDateNubmer} from "../util.js";
+import {getPreposition, completeDateNubmer, createElement} from "../util.js";
 
-export const createEventTemplate = (event) => {
+const createEventTemplate = (event) => {
   const {type, destination, startDate, endDate, price, offers} = event;
 
   const startTimeHours = completeDateNubmer(startDate.getHours());
@@ -20,11 +20,11 @@ export const createEventTemplate = (event) => {
 
     minutes = completeDateNubmer(Math.floor(minutes % 60));
     if (days !== ``) {
-      return days + `D ` + hours + `H ` + minutes + `M`;
+      return `${days}D ${hours}H ${minutes}M`;
     } else if (hours > 0) {
-      return hours + `H ` + minutes + `M`;
+      return `${hours}H ${minutes}M`;
     }
-    return minutes + `M`;
+    return `${minutes}M`;
   };
 
   const createEventOffersTemplate = (offersArray) => {
@@ -71,3 +71,27 @@ export const createEventTemplate = (event) => {
     </li>`
   );
 };
+
+export default class Event {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
