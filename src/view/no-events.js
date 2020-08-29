@@ -1,13 +1,13 @@
 import {createElement} from "../util.js";
 
-export default class EventDayList {
+export default class NoEvents {
   constructor() {
     this._element = null;
   }
 
   _getTemplate() {
     return (
-      `<ul class="trip-events__list"></ul>`
+      `<p class="trip-events__msg">Click New Event to create your first point</p>`
     );
   }
 
