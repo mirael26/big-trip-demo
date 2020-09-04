@@ -11,6 +11,7 @@ export default class EventEdit extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   _createTypeTemplate(type) {
@@ -123,5 +124,15 @@ export default class EventEdit extends AbstractView {
       </section>
       </form>`
     );
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  setFormSubmitHadler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
 }
