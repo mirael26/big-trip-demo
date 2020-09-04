@@ -1,9 +1,10 @@
-import {getPreposition, completeDateNubmer, createElement} from "../util.js";
+import AbstractView from "./abstract.js";
+import {completeDateNubmer, getPreposition} from "../util.js";
 
-export default class Event {
+export default class Event extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   _createOffersTemplate(offersArray) {
@@ -77,18 +78,6 @@ export default class Event {
       </div>
       </li>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

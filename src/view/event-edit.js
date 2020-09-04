@@ -1,15 +1,16 @@
 import {getPreposition, getCurrentDate, completeDateNubmer, createElement} from "../util.js";
 import {EVENT_TYPES, DESTINATIONS} from "../const.js";
+import AbstractView from "./abstract.js";
 
 const getEventEditDate = (date) => {
   return `${completeDateNubmer(date.getDate())}/${completeDateNubmer(date.getMonth())}/${completeDateNubmer(date.getFullYear())}
  ${completeDateNubmer(date.getHours())}:${completeDateNubmer(date.getMinutes())}`;
 };
 
-export default class EventEdit {
+export default class EventEdit extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   _createTypeTemplate(type) {
@@ -122,17 +123,5 @@ export default class EventEdit {
       </section>
       </form>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

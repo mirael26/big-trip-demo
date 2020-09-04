@@ -1,10 +1,11 @@
+import AbstractView from "./abstract.js";
 import {getShortDate, createElement} from "../util.js";
 
-export default class EventDay {
+export default class EventDay extends AbstractView {
   constructor(day, index) {
+    super();
     this._day = day;
     this._index = index;
-    this._element = null;
   }
 
   _getTemplate() {
@@ -22,17 +23,5 @@ export default class EventDay {
 
       </li>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

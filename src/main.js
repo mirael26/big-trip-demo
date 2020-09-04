@@ -13,7 +13,7 @@ import NoEventsView from "./view/no-events.js";
 import {generateEvent} from "./mock/event.js";
 import {render} from "./util.js";
 
-const EVENT_COUNT = 0;
+const EVENT_COUNT = 10;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 const eventsInOrder = events.slice().sort((a, b) => {
   return a.startDate - b.startDate;
