@@ -11,7 +11,7 @@ import EventDayListView from "./view/event-day-list.js";
 import EventView from "./view/event.js";
 import NoEventsView from "./view/no-events.js";
 import {generateEvent} from "./mock/event.js";
-import {render} from "./util.js";
+import {render} from "./utils/render.js";
 
 const EVENT_COUNT = 10;
 const events = new Array(EVENT_COUNT).fill().map(generateEvent);
@@ -64,30 +64,30 @@ const renderEvent = (eventList, event) => {
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  render(eventList, eventComponent.getElement(), `beforeend`);
+  render(eventList, eventComponent, `beforeend`);
 };
 
 const renderBoard = (boardEvents) => {
   const boardElement = siteMainElement.querySelector(`.trip-events`);
 
   if (boardEvents.size === 0) {
-    render(boardElement, new NoEventsView().getElement(), `afterbegin`);
+    render(boardElement, new NoEventsView(), `afterbegin`);
     return;
   }
 
-  render(boardElement, new SortView(events).getElement(), `afterbegin`);
+  render(boardElement, new SortView(events), `afterbegin`);
 
   const eventListComponent = new EventListView();
-  render(boardElement, eventListComponent.getElement(), `beforeend`);
+  render(boardElement, eventListComponent, `beforeend`);
 
   let mapIndex = 0;
   eventsByDays.forEach((value, key) => {
     mapIndex++;
     const eventDayComponent = new EventDayView(key, mapIndex);
-    render(eventListComponent.getElement(), eventDayComponent.getElement(), `beforeend`);
+    render(eventListComponent, eventDayComponent, `beforeend`);
 
     const eventDayListComponent = new EventDayListView();
-    render(eventDayComponent.getElement(), eventDayListComponent.getElement(), `beforeend`);
+    render(eventDayComponent, eventDayListComponent, `beforeend`);
 
     value.forEach((event) => {
       renderEvent(eventDayListComponent.getElement(), event);
@@ -98,22 +98,22 @@ const renderBoard = (boardEvents) => {
 const siteHeaderElement = document.querySelector(`.trip-main`);
 
 const TripInfoContainerComponent = new TripInfoContainerView();
-render(siteHeaderElement, TripInfoContainerComponent.getElement(), `afterbegin`);
+render(siteHeaderElement, TripInfoContainerComponent, `afterbegin`);
 
-if (eventsByDays.length > 0) {
-  render(TripInfoContainerComponent.getElement(), new TripInfoView(eventsInOrder).getElement(), `afterbegin`);
+if (eventsByDays.size > 0) {
+  render(TripInfoContainerComponent, new TripInfoView(eventsInOrder), `afterbegin`);
 }
 
-render(TripInfoContainerComponent.getElement(), new TripCostView(eventsInOrder).getElement(), `beforeend`);
+render(TripInfoContainerComponent, new TripCostView(eventsInOrder), `beforeend`);
 
 const menuElement = siteHeaderElement.querySelector(`.trip-main__trip-controls`);
 
-render(menuElement, new SiteMenuView().getElement(), `afterbegin`);
+render(menuElement, new SiteMenuView(), `afterbegin`);
 
 const menuTitleElement = menuElement.querySelector(`.trip-main__trip-controls h2:first-of-type`);
 menuElement.prepend(menuTitleElement);
 
-render(menuElement, new FilterView().getElement(), `beforeend`);
+render(menuElement, new FilterView(), `beforeend`);
 
 const siteMainElement = document.querySelector(`.page-body__page-main`);
 

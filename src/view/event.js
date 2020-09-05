@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {completeDateNubmer, getPreposition} from "../util.js";
+import {completeDateNubmer, getPreposition} from "../utils/event.js";
 
 export default class Event extends AbstractView {
   constructor(event) {

@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {isNoEvents} from "../util.js";
+import {isNoEvents} from "../utils/event.js";
 
 export default class Sort extends AbstractView {
   constructor(events) {

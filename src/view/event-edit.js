@@ -1,17 +1,17 @@
-import {getPreposition, getCurrentDate, completeDateNubmer, createElement} from "../util.js";
+import {getPreposition, getCurrentDate, completeDateNubmer} from "../utils/event.js";
 import {EVENT_TYPES, DESTINATIONS} from "../const.js";
 import AbstractView from "./abstract.js";
-
-const getEventEditDate = (date) => {
-  return `${completeDateNubmer(date.getDate())}/${completeDateNubmer(date.getMonth())}/${completeDateNubmer(date.getFullYear())}
- ${completeDateNubmer(date.getHours())}:${completeDateNubmer(date.getMinutes())}`;
-};
 
 export default class EventEdit extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+  }
+
+  _getEventEditDate(date) {
+    return `${completeDateNubmer(date.getDate())}/${completeDateNubmer(date.getMonth())}/${completeDateNubmer(date.getFullYear())}
+ ${completeDateNubmer(date.getHours())}:${completeDateNubmer(date.getMinutes())}`;
   }
 
   _createTypeTemplate(type) {
@@ -99,12 +99,12 @@ export default class EventEdit extends AbstractView {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getEventEditDate(startDate)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${this._getEventEditDate(startDate)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getEventEditDate(endDate)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${this._getEventEditDate(endDate)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

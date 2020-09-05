@@ -1,4 +1,4 @@
-import {isNoEvents, getShortDate, createElement} from "../util.js";
+import {isNoEvents, getShortDate} from "../utils/event.js";
 import AbstractView from "./abstract.js";
 
 export default class TripInfo extends AbstractView {

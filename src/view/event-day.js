@@ -1,5 +1,6 @@
 import AbstractView from "./abstract.js";
-import {getShortDate, createElement} from "../util.js";
+import {getShortDate} from "../utils/event.js";
+import {createElement} from "../utils/render.js";
 
 export default class EventDay extends AbstractView {
   constructor(day, index) {
