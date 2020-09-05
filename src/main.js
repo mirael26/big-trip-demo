@@ -3,13 +3,7 @@ import TripInfoView from "./view/trip-info.js";
 import TripCostView from "./view/trip-cost.js";
 import SiteMenuView from "./view/site-menu.js";
 import FilterView from "./view/filter.js";
-import SortView from "./view/sort.js";
-import EventEditView from "./view/event-edit.js";
-import EventListView from "./view/event-list.js";
-import EventDayView from "./view/event-day.js";
-import EventDayListView from "./view/event-day-list.js";
-import EventView from "./view/event.js";
-import NoEventsView from "./view/no-events.js";
+import BoardPresenter from "./presenter/board.js";
 import {generateEvent} from "./mock/event.js";
 import {render} from "./utils/render.js";
 
@@ -34,67 +28,6 @@ daysUniq.forEach((day) => {
   }));
 });
 
-const renderEvent = (eventList, event) => {
-  const eventComponent = new EventView(event);
-  const eventEditComponent = new EventEditView(event);
-
-  const replaceEventToForm = () => {
-    eventList.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
-  };
-
-  const replaceFormToEvent = () => {
-    eventList.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
-  };
-
-  const onEscKeyDown = (evt) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
-      evt.preventDefault();
-      replaceFormToEvent();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  eventComponent.setEditClickHandler(() => {
-    replaceEventToForm();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  eventEditComponent.setFormSubmitHadler(() => {
-    replaceFormToEvent();
-    document.removeEventListener(`keydown`, onEscKeyDown);
-  });
-
-  render(eventList, eventComponent, `beforeend`);
-};
-
-const renderBoard = (boardEvents) => {
-  const boardElement = siteMainElement.querySelector(`.trip-events`);
-
-  if (boardEvents.size === 0) {
-    render(boardElement, new NoEventsView(), `afterbegin`);
-    return;
-  }
-
-  render(boardElement, new SortView(events), `afterbegin`);
-
-  const eventListComponent = new EventListView();
-  render(boardElement, eventListComponent, `beforeend`);
-
-  let mapIndex = 0;
-  eventsByDays.forEach((value, key) => {
-    mapIndex++;
-    const eventDayComponent = new EventDayView(key, mapIndex);
-    render(eventListComponent, eventDayComponent, `beforeend`);
-
-    const eventDayListComponent = new EventDayListView();
-    render(eventDayComponent, eventDayListComponent, `beforeend`);
-
-    value.forEach((event) => {
-      renderEvent(eventDayListComponent.getElement(), event);
-    });
-  });
-};
-
 const siteHeaderElement = document.querySelector(`.trip-main`);
 
 const TripInfoContainerComponent = new TripInfoContainerView();
@@ -116,6 +49,7 @@ menuElement.prepend(menuTitleElement);
 render(menuElement, new FilterView(), `beforeend`);
 
 const siteMainElement = document.querySelector(`.page-body__page-main`);
+const boardElement = siteMainElement.querySelector(`.trip-events`);
 
-renderBoard(eventsByDays);
-
+const boardPresenter = new BoardPresenter(boardElement);
+boardPresenter.init(eventsByDays);
