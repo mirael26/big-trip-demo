@@ -1,9 +1,10 @@
-import {isNoEvents, getShortDate, createElement} from "../util.js";
+import {isNoEvents, getShortDate} from "../utils/event.js";
+import AbstractView from "./abstract.js";
 
-export default class TripInfo {
+export default class TripInfo extends AbstractView {
   constructor(events) {
+    super();
     this._events = events;
-    this._element = null;
   }
 
   _getTemplate() {
@@ -25,17 +26,5 @@ export default class TripInfo {
       <p class="trip-info__dates">${getShortDate(startDay)}&nbsp;&mdash;&nbsp;${getShortDate(endDay)}</p>
       </div>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

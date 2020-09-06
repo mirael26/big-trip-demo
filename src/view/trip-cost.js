@@ -1,9 +1,9 @@
-import {createElement} from "../util.js";
+import AbstractView from "./abstract.js";
 
-export default class TripCost {
+export default class TripCost extends AbstractView {
   constructor(events) {
+    super();
     this._events = events;
-    this._element = null;
   }
 
   _getTemplate() {
@@ -23,17 +23,5 @@ export default class TripCost {
       Total: &euro;&nbsp;<span class="trip-info__cost-value">${cost}</span>
       </p>`
     );
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this._getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

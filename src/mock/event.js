@@ -1,5 +1,5 @@
 import {EVENT_TYPES, DESTINATIONS, EVENT_DESCRIPTIONS, OFFERS} from "../const.js";
-import {getRandomInteger, getRandomElement} from "../util.js";
+import {getRandomInteger, getRandomElement} from "../utils/common.js";
 
 const DESCRIPTION_COUNT_MIN = 0;
 const DESCRIPTION_COUNT_MAX = 5;
