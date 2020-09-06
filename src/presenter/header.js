@@ -1,62 +1,61 @@
-import TripInfoContainerView from "./view/trip-info-container.js";
-import TripInfoView from "./view/trip-info.js";
-import TripCostView from "./view/trip-cost.js";
-import SiteMenuView from "./view/site-menu.js";
-import FilterView from "./view/filter.js";
-import SortView from "./view/sort.js";
-import EventEditView from "./view/event-edit.js";
-import EventListView from "./view/event-list.js";
-import EventDayView from "./view/event-day.js";
-import EventDayListView from "./view/event-day-list.js";
-import EventView from "./view/event.js";
-import NoEventsView from "./view/no-events.js";
+import TripInfoContainerView from "../view/trip-info-container.js";
+import TripInfoView from "../view/trip-info.js";
+import TripCostView from "../view/trip-cost.js";
+import TripControlsView from "../view/trip-controls.js";
+import SiteMenuView from "../view/site-menu.js";
+import FilterView from "../view/filter.js";
 import {render} from "../utils/render.js";
 
-export default class Board {
-  constructor(boardContainer) {
-    this._boardContainer = boardContainer;
+export default class Header {
+  constructor(headerContainer) {
+    this._headerContainer = headerContainer;
 
-    this._Component = new ();
-    this._Component = new ();
-    this._Component = new ();
-    this._Component = new ();
-    this._Component = new ();
-    this._Component = new ();
-    this._sortComponent = new SortView();
-    this._taskListComponent = new TaskListView();
-    this._noTaskComponent = new NoTaskView();
+    this._tripInfoContainerComponent = new TripInfoContainerView();
+    this._tripControlsComponent = new TripControlsView();
+    this._siteMenuComponent = new SiteMenuView();
+    this._filterComponent = new FilterView();
   }
 
-  init(boardTasks) {
-    this._boardTasks = boardTasks.slice();
-    // Метод для инициализации (начала работы) модуля,
-    // малая часть текущей функции renderBoard в main.js
+  init(eventsInfo) {
+    this._eventsInfo = eventsInfo;
+
+    this._renderHeader();
   }
 
-  _renderSort() {
-    // Метод для рендеринга сортировки
+  _renderTripInfo() {
+    render(this._tripInfoContainerComponent, new TripInfoView(this._eventsInfo), `afterbegin`);
   }
 
-  _renderTask() {
-    // Метод, куда уйдёт логика созданию и рендерингу компонетов задачи,
-    // текущая функция renderTask в main.js
+  _renderTripCost() {
+    render(this._tripInfoContainerComponent, new TripCostView(this._eventsInfo), `beforeend`);
   }
 
-  _renderTasks() {
-    // Метод для рендеринга N-задач за раз
+  _renderTripInfoContainer() {
+    render(this._headerContainer, this._tripInfoContainerComponent, `afterbegin`);
+    if (this._eventsInfo.length > 0) {
+      this._renderTripInfo();
+    }
+    this._renderTripCost();
   }
 
-  _renderNoTasks() {
-    // Метод для рендеринга заглушки
+  _renderSiteMenu() {
+    render(this._tripControlsComponent, this._siteMenuComponent, `beforeend`);
   }
 
-  _renderLoadMoreButton() {
-    // Метод, куда уйдёт логика по отрисовке компонетов задачи,
-    // текущая функция renderTask в main.js
+  _renderFilter() {
+    render(this._tripControlsComponent, this._filterComponent, `beforeend`);
   }
 
-  _renderBoard() {
-    // Метод для инициализации (начала работы) модуля,
-    // бОльшая часть текущей функции renderBoard в main.js
+  _rednerTripControls() {
+    render(this._headerContainer, this._tripControlsComponent, `afterbegin`);
+    this._renderSiteMenu();
+    this._renderFilter();
+  }
+
+  _renderHeader() {
+    render(this._headerContainer, this._tripInfoContainerComponent, `afterbegin`);
+
+    this._rednerTripControls();
+    this._renderTripInfoContainer();
   }
 }

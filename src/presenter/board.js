@@ -7,7 +7,7 @@ import EventView from "../view/event.js";
 import NoEventsView from "../view/no-events.js";
 import {render, replace} from "../utils/render.js";
 
-export default class Board {
+export default class Trip {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
 
@@ -15,14 +15,14 @@ export default class Board {
     this._noEventsComponent = new NoEventsView();
   }
 
-  init(boardEvents) {
-    this._boardEvents = boardEvents;
+  init(tripEvents) {
+    this._tripEvents = tripEvents;
 
     this._renderBoard();
   }
 
   _renderSort() {
-    render(this._boardContainer, new SortView(this._boardEvents), `afterbegin`);
+    render(this._boardContainer, new SortView(this._tripEvents), `afterbegin`);
   }
 
   _renderEvent(eventList, event) {
@@ -66,7 +66,7 @@ export default class Board {
     render(this._boardContainer, this._eventListComponent, `beforeend`);
 
     let mapIndex = 0;
-    this._boardEvents.forEach((value, key) => {
+    this._tripEvents.forEach((value, key) => {
       mapIndex++;
       const eventDayComponent = new EventDayView(key, mapIndex);
       render(this._eventListComponent, eventDayComponent, `beforeend`);
@@ -81,7 +81,7 @@ export default class Board {
   }
 
   _renderBoard() {
-    if (this._boardEvents.size === 0) {
+    if (this._tripEvents.size === 0) {
       this._noEventsComponent();
       return;
     }
