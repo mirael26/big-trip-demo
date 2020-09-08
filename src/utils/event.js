@@ -52,7 +52,7 @@ const sortEventsByTime = (eventA, eventB) => {
 };
 
 const sortEventsByPrice = (eventA, eventB) => {
-  return eventA.price - eventB.price;
+  return eventB.price - eventA.price;
 };
 
 export {isNoEvents, getPreposition, getCurrentDate, completeDateNubmer, getShortDate, sortEventsByTime, sortEventsByPrice, sortEventsByDays, createMapFromObject};
