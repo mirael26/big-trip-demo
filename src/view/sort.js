@@ -47,6 +47,11 @@ export default class Sort extends AbstractView {
   _sortTypeChangeHandler(evt) {
     evt.preventDefault();
     this._callback.sortTypeChange(evt.target.dataset.sortType);
+    if (evt.target.dataset.sortType !== SortType.DEFAULT) {
+      this._element.querySelector(`.trip-sort__item--day`).textContent = ``;
+    } else {
+      this._element.querySelector(`.trip-sort__item--day`).textContent = `Day`;
+    }
   }
 
   setSortTypeChangeHandler(callback) {
