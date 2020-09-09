@@ -10,7 +10,7 @@ export default class Abstract {
     this._callback = {};
   }
 
-  getTemplate() {
+  _getTemplate() {
     throw new Error(`Abstract method not implemented: getTemplate`);
   }
 

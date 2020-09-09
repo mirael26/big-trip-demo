@@ -73,4 +73,10 @@ const OFFERS = [
   },
 ];
 
-export {EVENT_TYPES, DESTINATIONS, EVENT_DESCRIPTIONS, OFFERS};
+const SortType = {
+  DEFAULT: `default`,
+  TIME: `time`,
+  PRICE: `price`
+};
+
+export {EVENT_TYPES, DESTINATIONS, EVENT_DESCRIPTIONS, OFFERS, SortType};

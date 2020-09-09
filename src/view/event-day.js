@@ -14,14 +14,17 @@ export default class EventDay extends AbstractView {
     const date = new Date(day);
     const dateShort = getShortDate(date);
 
-    return (
-      `<li class="trip-days__item  day">
-      <div class="day__info">
-        <span class="day__counter">${index}</span>
-        <time class="day__date" datetime="${date.toISOString()}">${dateShort}</time>
-      </div>
-
+    return (day === ``)
+      ? `<li class="trip-days__item  day">
+      <div class="day__info"></div>
       </li>`
-    );
+
+      : `<li class="trip-days__item  day">
+        <div class="day__info">
+          <span class="day__counter">${index}</span>
+          <time class="day__date" datetime="${date.toISOString()}">${dateShort}</time>
+        </div>
+
+        </li>`;
   }
 }
