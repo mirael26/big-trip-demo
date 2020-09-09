@@ -6,7 +6,7 @@ import EventDayListView from "../view/event-day-list.js";
 import EventView from "../view/event.js";
 import NoEventsView from "../view/no-events.js";
 import {render, replace} from "../utils/render.js";
-import {sortEventsByDays, sortEventsByTime, sortEventsByPrice, createMapFromObject} from "../utils/event.js";
+import {sortEventsByDays, sortEventsByTime, sortEventsByPrice} from "../utils/event.js";
 import {SortType} from "../const.js";
 
 export default class Trip {
@@ -20,7 +20,7 @@ export default class Trip {
   }
 
   init(tripEvents) {
-    this._tripEventsForSort = createMapFromObject(tripEvents);
+    this._tripEventsList = tripEvents;
     this._tripEventsByDays = sortEventsByDays(tripEvents);
     this._tripEvents = this._tripEventsByDays;
 
@@ -30,10 +30,10 @@ export default class Trip {
   _sortTasks(sortType) {
     switch (sortType) {
       case SortType.TIME:
-        this._tripEvents = this._tripEventsForSort.set(``, (this._tripEventsForSort.get(``).sort(sortEventsByTime)));
+        this._tripEvents = new Map().set(``, (this._tripEventsList.sort(sortEventsByTime)));
         break;
       case SortType.PRICE:
-        this._tripEvents = this._tripEventsForSort.set(``, (this._tripEventsForSort.get(``).sort(sortEventsByPrice)));
+        this._tripEvents = new Map().set(``, (this._tripEventsList.sort(sortEventsByPrice)));
         break;
       default:
         this._tripEvents = this._tripEventsByDays;

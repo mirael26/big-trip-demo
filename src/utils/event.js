@@ -41,12 +41,6 @@ const completeDateNubmer = (number) => {
   return (`0` + number.toString()).slice(-2);
 };
 
-const createMapFromObject = (object) => {
-  const newMap = new Map();
-  newMap.set(``, object);
-  return newMap;
-};
-
 const sortEventsByTime = (eventA, eventB) => {
   return (eventB.endDate - eventB.startDate) - (eventA.endDate - eventA.startDate);
 };
@@ -55,4 +49,4 @@ const sortEventsByPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
-export {isNoEvents, getPreposition, getCurrentDate, completeDateNubmer, getShortDate, sortEventsByTime, sortEventsByPrice, sortEventsByDays, createMapFromObject};
+export {isNoEvents, getPreposition, getCurrentDate, completeDateNubmer, getShortDate, sortEventsByTime, sortEventsByPrice, sortEventsByDays};
