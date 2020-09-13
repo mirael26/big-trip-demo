@@ -4,7 +4,7 @@ import EventDayView from "../view/event-day.js";
 import EventDayListView from "../view/event-day-list.js";
 import NoEventsView from "../view/no-events.js";
 import EventPresenter from "./event.js";
-import {render, replace} from "../utils/render.js";
+import {render} from "../utils/render.js";
 import {sortEventsByDays, sortEventsByTime, sortEventsByPrice} from "../utils/event.js";
 import {SortType} from "../const.js";
 
@@ -12,6 +12,7 @@ export default class Trip {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
     this._currentSortType = SortType.DEFAULT;
+    this._eventPresenter = {};
 
     this._eventListComponent = new EventListView();
     this._noEventsComponent = new NoEventsView();
@@ -58,38 +59,9 @@ export default class Trip {
   }
 
   _renderEvent(eventList, event) {
-    // const eventComponent = new EventView(event);
-    // const eventEditComponent = new EventEditView(event);
-
-    // const replaceEventToForm = () => {
-    //   replace(eventEditComponent, eventComponent);
-    // };
-
-    // const replaceFormToEvent = () => {
-    //   replace(eventComponent, eventEditComponent);
-    // };
-
-    // const onEscKeyDown = (evt) => {
-    //   if (evt.key === `Escape` || evt.key === `Esc`) {
-    //     evt.preventDefault();
-    //     replaceFormToEvent();
-    //     document.removeEventListener(`keydown`, onEscKeyDown);
-    //   }
-    // };
-
-    // eventComponent.setEditClickHandler(() => {
-    //   replaceEventToForm();
-    //   document.addEventListener(`keydown`, onEscKeyDown);
-    // });
-
-    // eventEditComponent.setFormSubmitHadler(() => {
-    //   replaceFormToEvent();
-    //   document.removeEventListener(`keydown`, onEscKeyDown);
-    // });
-
-    // render(eventList, eventComponent, `beforeend`);
     const eventPresenter = new EventPresenter(eventList);
     eventPresenter.init(event);
+    this._eventPresenter[event.id] = eventPresenter;
   }
 
   _renderNoEvents() {
@@ -116,6 +88,10 @@ export default class Trip {
 
   _clearEventList() {
     this._eventListComponent.getElement().innerHTML = ``;
+    Object
+      .values(this._eventPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._eventPresenter = {};
   }
 
   _renderBoard() {

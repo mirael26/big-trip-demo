@@ -15,6 +15,8 @@ const PRICE_MAX = 600;
 const OPTIONS_MIN = 0;
 const OPTIONS_MAX = 4;
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateDate = () => {
   const daysGap = getRandomInteger(DAYS_MIN, DAYS_MAX);
   const daysCount = 2;
@@ -57,6 +59,7 @@ export const generateEvent = () => {
   const allEventTypes = EVENT_TYPES.transfer.concat(EVENT_TYPES.activity);
 
   return {
+    id: generateId(),
     type: getRandomElement(allEventTypes),
     destination: getRandomElement(DESTINATIONS),
     destinationInfo: {
