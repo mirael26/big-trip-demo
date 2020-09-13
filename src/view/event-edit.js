@@ -6,6 +6,7 @@ export default class EventEdit extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
@@ -65,7 +66,25 @@ export default class EventEdit extends AbstractView {
   </section>`;
   }
 
+  _createFavoriteButtonTemplate(isFavorite) {
+    return this._isNewEvent ? `` : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
+    <label class="event__favorite-btn" for="event-favorite-1">
+      <span class="visually-hidden">Add to favorite</span>
+      <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+        <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+      </svg>
+    </label>`;
+  }
+
+  _createCloseButtonTemplate() {
+    return this._isNewEvent ? `` : `<button class="event__rollup-btn" type="button">
+    <span class="visually-hidden">Open event</span>
+  </button>`;
+  }
+
   _getTemplate() {
+    this._isNewEvent = Object.keys(this._event).length === 0 ? true : false;
+
     const {
       type = `Bus`,
       destination = ``,
@@ -74,11 +93,14 @@ export default class EventEdit extends AbstractView {
       endDate = getCurrentDate(),
       price = ``,
       offers = ``,
+      isFavorite = false,
     } = this._event;
 
     const typeTemplate = this._createTypeTemplate(type);
     const offerTemplate = this._createOfferTemplate(offers);
     const destinationTemplate = this._createDestinationTemplate(destinationInfo);
+    const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite);
+    const closeButtonTemplate = this._createCloseButtonTemplate();
 
     return (
       `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -116,7 +138,10 @@ export default class EventEdit extends AbstractView {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">Cancel</button>
+        <button class="event__reset-btn" type="reset">${this._isNewEvent ? `Cancel` : `Delete`}</button>
+
+        ${favoriteButtonTemplate}
+        ${closeButtonTemplate}
       </header>
       <section class="event__details">
         ${offerTemplate}
@@ -128,11 +153,21 @@ export default class EventEdit extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._event);
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`change`, this._favoriteClickHandler);
   }
 }

@@ -70,5 +70,6 @@ export const generateEvent = () => {
     endDate: days[1],
     price,
     offers,
+    isFavorite: Boolean(getRandomInteger(0, 1)),
   };
 };
