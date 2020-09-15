@@ -1,9 +1,9 @@
 import {getPreposition, getCurrentDate, completeDateNubmer} from "../utils/event.js";
 import {capitalizeFirst} from "../utils/common.js";
 import {EVENT_TYPES, DESTINATIONS, OFFERS} from "../const.js";
-import AbstractView from "./abstract.js";
+import SmartView from "./smart.js";
 
-export default class EventEdit extends AbstractView {
+export default class EventEdit extends SmartView {
   constructor(eventData) {
     super();
     this._data = EventEdit.parseEventToData(eventData);
@@ -159,37 +159,6 @@ export default class EventEdit extends AbstractView {
       </section>
       </form>`
     );
-  }
-
-  updateData(update, justDataUpdating) {
-    if (!update) {
-      return;
-    }
-
-    this._data = Object.assign(
-        {},
-        this._data,
-        update
-    );
-
-    if (justDataUpdating) {
-      return;
-    }
-
-    this.updateElement();
-  }
-
-  updateElement() {
-    let prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    prevElement = null;
-
-    this.restoreHandlers();
   }
 
   restoreHandlers() {
