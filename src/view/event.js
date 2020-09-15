@@ -1,5 +1,6 @@
 import AbstractView from "./abstract.js";
 import {completeDateNubmer, getPreposition} from "../utils/event.js";
+import {capitalizeFirst} from "../utils/common.js";
 
 export default class Event extends AbstractView {
   constructor(event) {
@@ -53,7 +54,7 @@ export default class Event extends AbstractView {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} ${getPreposition(type)} ${destination}</h3>
+        <h3 class="event__title">${capitalizeFirst(type)} ${getPreposition(type)} ${destination}</h3>
 
         <div class="event__schedule">
           <p class="event__time">

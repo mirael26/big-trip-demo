@@ -36,11 +36,11 @@ export default class Event {
       return;
     }
 
-    if (this._eventListContainer.getElement().contains(prevEventComponent.getElement())) {
+    if (this._eventListContainer.contains(prevEventComponent.getElement())) {
       replace(this._eventComponent, prevEventComponent);
     }
 
-    if (this._eventListContainer.getElement().contains(prevEventEditComponent.getElement())) {
+    if (this._eventListContainer.contains(prevEventEditComponent.getElement())) {
       replace(this._eventEditComponent, prevEventEditComponent);
     }
 

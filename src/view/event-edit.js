@@ -1,14 +1,18 @@
 import {getPreposition, getCurrentDate, completeDateNubmer} from "../utils/event.js";
+import {capitalizeFirst} from "../utils/common.js";
 import {EVENT_TYPES, DESTINATIONS} from "../const.js";
 import AbstractView from "./abstract.js";
 
 export default class EventEdit extends AbstractView {
-  constructor(event) {
+  constructor(eventData) {
     super();
-    this._event = event;
+    this._data = EventEdit.parseEventToData(eventData);
     this._closeButtonHandler = this._closeButtonHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._typeToggleHandler = this._typeToggleHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   _getEventEditDate(date) {
@@ -29,8 +33,8 @@ export default class EventEdit extends AbstractView {
       <legend class="visually-hidden">${key}</legend>
 
       ${EVENT_TYPES[key].map((eventType) => `<div class="event__type-item">
-        <input id="event-type-${eventType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType.toLowerCase()}">
-        <label class="event__type-label  event__type-label--${eventType.toLowerCase()}" for="event-type-${eventType.toLowerCase()}-1">${eventType}</label>
+        <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}">
+        <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${eventType}</label>
         </div>`).join(``)}
     </fieldset>`).join(``)}
 
@@ -55,7 +59,7 @@ export default class EventEdit extends AbstractView {
   }
 
   _createDestinationTemplate(destinationInfo) {
-    return destinationInfo === `` ? `` : `<section class="event__section  event__section--destination">
+    return `<section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${destinationInfo.description}</p>
 
@@ -67,8 +71,8 @@ export default class EventEdit extends AbstractView {
   </section>`;
   }
 
-  _createFavoriteButtonTemplate(isFavorite) {
-    return this._isNewEvent ? `` : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
+  _createFavoriteButtonTemplate(isFavorite, isNewEvent) {
+    return isNewEvent ? `` : `<input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
     <label class="event__favorite-btn" for="event-favorite-1">
       <span class="visually-hidden">Add to favorite</span>
       <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -77,15 +81,13 @@ export default class EventEdit extends AbstractView {
     </label>`;
   }
 
-  _createCloseButtonTemplate() {
-    return this._isNewEvent ? `` : `<button class="event__rollup-btn" type="button">
+  _createCloseButtonTemplate(isNewEvent) {
+    return isNewEvent ? `` : `<button class="event__rollup-btn" type="button">
     <span class="visually-hidden">Open event</span>
   </button>`;
   }
 
   _getTemplate() {
-    this._isNewEvent = Object.keys(this._event).length === 0 ? true : false;
-
     const {
       type = `Bus`,
       destination = ``,
@@ -95,13 +97,15 @@ export default class EventEdit extends AbstractView {
       price = ``,
       offers = ``,
       isFavorite = false,
-    } = this._event;
+      isDestination,
+      isNewEvent,
+    } = this._data;
 
     const typeTemplate = this._createTypeTemplate(type);
     const offerTemplate = this._createOfferTemplate(offers);
     const destinationTemplate = this._createDestinationTemplate(destinationInfo);
-    const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite);
-    const closeButtonTemplate = this._createCloseButtonTemplate();
+    const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite, isNewEvent);
+    const closeButtonTemplate = this._createCloseButtonTemplate(isNewEvent);
 
     return (
       `<form class="trip-events__item  event  event--edit" action="#" method="post">
@@ -110,11 +114,11 @@ export default class EventEdit extends AbstractView {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${type} ${getPreposition(type)}
+            ${capitalizeFirst(type)} ${getPreposition(type)}
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=" ${destination}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${DESTINATIONS.map((city) => `<option value="${city}"></option>`)}
+            ${DESTINATIONS.map((city) => `<option value="${city}"></option>`).join(``)}
           </datalist>
         </div>
 
@@ -139,17 +143,68 @@ export default class EventEdit extends AbstractView {
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-        <button class="event__reset-btn" type="reset">${this._isNewEvent ? `Cancel` : `Delete`}</button>
+        <button class="event__reset-btn" type="reset">${isNewEvent ? `Cancel` : `Delete`}</button>
 
         ${favoriteButtonTemplate}
         ${closeButtonTemplate}
       </header>
       <section class="event__details">
         ${offerTemplate}
-        ${destinationTemplate}
+        ${isDestination ? destinationTemplate : ``}
       </section>
       </form>`
     );
+  }
+
+  updateData(update, justDataUpdating) {
+    if (!update) {
+      return;
+    }
+
+    this._data = Object.assign(
+        {},
+        this._data,
+        update
+    );
+
+    if (justDataUpdating) {
+      return;
+    }
+
+    this.updateElement();
+  }
+
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    prevElement = null;
+
+    this.restoreHandlers();
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setCloseButtonClickHandler(this._callback.closeButtonClick);
+    this.setFavoriteClickHandler(this._callback.favoriteClick);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector(`.event__type-list`)
+      .addEventListener(`change`, this._typeToggleHandler);
+  }
+
+  _typeToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      type: evt.target.value
+    });
   }
 
   _closeButtonHandler(evt) {
@@ -159,7 +214,7 @@ export default class EventEdit extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._event);
+    this._callback.formSubmit(EventEdit.parseDataToEvent(this._data));
   }
 
   _favoriteClickHandler(evt) {
@@ -175,6 +230,26 @@ export default class EventEdit extends AbstractView {
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  static parseEventToData(eventData) {
+    return Object.assign(
+        {},
+        eventData,
+        {
+          isDestination: eventData.destination !== ``,
+          isNewEvent: Object.keys(eventData).length === 0 ? true : false,
+        }
+    );
+  }
+
+  static parseDataToEvent(data) {
+    data = Object.assign({}, data);
+
+    delete data.isDestination;
+    delete data.isNewEvent;
+
+    return data;
   }
 
   setFavoriteClickHandler(callback) {

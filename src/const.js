@@ -1,6 +1,6 @@
 const EVENT_TYPES = {
-  transfer: [`Taxi`, `Bus`, `Train`, `Ship`, `Transport`, `Drive`, `Flight`],
-  activity: [`Check-in`, `Sightseeing`, `Restaurant`]
+  transfer: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`],
+  activity: [`check-in`, `sightseeing`, `restaurant`]
 };
 const DESTINATIONS = [`Amsterdam`, `Geneva`, `Chamonix`, `Saint Petersburg`];
 const EVENT_DESCRIPTIONS = [

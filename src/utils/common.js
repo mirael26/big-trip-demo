@@ -24,4 +24,11 @@ const updateItem = (items, update) => {
   ];
 };
 
-export {getRandomInteger, getRandomElement, updateItem};
+const capitalizeFirst = (str) => {
+  if (!str) {
+    return str;
+  }
+  return str[0].toUpperCase() + str.slice(1);
+};
+
+export {getRandomInteger, getRandomElement, updateItem, capitalizeFirst};
