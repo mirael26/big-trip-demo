@@ -1,6 +1,6 @@
 import {getPreposition, getCurrentDate, completeDateNubmer} from "../utils/event.js";
 import {capitalizeFirst} from "../utils/common.js";
-import {EVENT_TYPES, DESTINATIONS} from "../const.js";
+import {EVENT_TYPES, DESTINATIONS, OFFERS} from "../const.js";
 import AbstractView from "./abstract.js";
 
 export default class EventEdit extends AbstractView {
@@ -42,15 +42,18 @@ export default class EventEdit extends AbstractView {
   </div>`;
   }
 
-  _createOfferTemplate(offers) {
+  _createOfferTemplate(checkedOffers, currentType) {
+
     return `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-      ${offers.map((offer) => `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.name}-1" type="checkbox" name="event-offer-${offer.name}" checked>
-        <label class="event__offer-label" for="event-offer-${offer.name}-1">
-          <span class="event__offer-title">${offer.text}</span>
+    ${OFFERS.find((element) => {
+    return element.type === currentType;
+  }).offers.map((offer) => `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.short}-1" type="checkbox" name="event-offer-${offer.short}" ${checkedOffers.includes(offer) ? `checked` : ``}>
+        <label class="event__offer-label" for="event-offer-${offer.short}-1">
+          <span class="event__offer-title">${offer.title}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
         </label>
@@ -102,7 +105,7 @@ export default class EventEdit extends AbstractView {
     } = this._data;
 
     const typeTemplate = this._createTypeTemplate(type);
-    const offerTemplate = this._createOfferTemplate(offers);
+    const offerTemplate = this._createOfferTemplate(offers, type);
     const destinationTemplate = this._createDestinationTemplate(destinationInfo);
     const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite, isNewEvent);
     const closeButtonTemplate = this._createCloseButtonTemplate(isNewEvent);

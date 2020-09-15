@@ -53,13 +53,6 @@ export const generateEvent = () => {
 
   const offersCount = getRandomInteger(OPTIONS_MIN, OPTIONS_MAX);
 
-  // const getOffers = (pointType) => {
-  //   return new Array(offersCount).fill().map(() => {
-  //     return getRandomElement(OFFERS.find((element) => {
-  //       return element.type === pointType;
-  //     }).offers);
-  //   });
-  // };
   const getOffers = (pointType) => {
     const offersArray = [];
     while (offersArray.length < offersCount) {
