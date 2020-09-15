@@ -12,7 +12,7 @@ export default class Event extends AbstractView {
   _createOffersTemplate(offersArray) {
     return offersArray.slice(0, 3).map((option) =>
       `<li class="event__offer">
-        <span class="event__offer-title">${option.text}</span>
+        <span class="event__offer-title">${option.title}</span>
         &plus;
         &euro;&nbsp;<span class="event__offer-price">${option.price}</span>
         </li>`
