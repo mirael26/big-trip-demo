@@ -2,6 +2,8 @@ import AbstractView from "./abstract.js";
 import {completeDateNubmer, getPreposition} from "../utils/event.js";
 import {capitalizeFirst} from "../utils/common.js";
 
+const SHOW_OFFER_MAX = 3;
+
 export default class Event extends AbstractView {
   constructor(event) {
     super();
@@ -10,7 +12,7 @@ export default class Event extends AbstractView {
   }
 
   _createOffersTemplate(offersArray) {
-    return offersArray.slice(0, 3).map((option) =>
+    return offersArray.slice(0, SHOW_OFFER_MAX).map((option) =>
       `<li class="event__offer">
         <span class="event__offer-title">${option.title}</span>
         &plus;

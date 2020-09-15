@@ -11,6 +11,7 @@ export default class EventEdit extends AbstractView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
+    this._offerToggleHandler = this._offerToggleHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -201,6 +202,9 @@ export default class EventEdit extends AbstractView {
     this.getElement()
       .querySelector(`.event__type-list`)
       .addEventListener(`change`, this._typeToggleHandler);
+    this.getElement()
+      .querySelector(`.event__section--offers`)
+      .addEventListener(`change`, this._offerToggleHandler);
   }
 
   _typeToggleHandler(evt) {
@@ -208,6 +212,27 @@ export default class EventEdit extends AbstractView {
     this.updateData({
       type: evt.target.value
     });
+  }
+
+  _offerToggleHandler(evt) {
+    evt.preventDefault();
+    const newOffer = OFFERS.find((element) => {
+      return element.type === this._data.type;
+    }).offers
+      .find((element) => {
+        return element.title === evt.target.nextElementSibling.querySelector(`.event__offer-title`).textContent;
+      });
+    if (this._data.offers.includes(newOffer)) {
+      this._data.offers = this._data.offers.filter((offer) => {
+        return offer !== newOffer;
+      });
+    } else {
+      this._data.offers.push(newOffer);
+    }
+
+    this.updateData({
+      offers: this._data.offers
+    }, true);
   }
 
   _closeButtonHandler(evt) {
