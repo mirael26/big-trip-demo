@@ -12,6 +12,7 @@ export default class EventEdit extends AbstractView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._offerToggleHandler = this._offerToggleHandler.bind(this);
+    this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -120,7 +121,7 @@ export default class EventEdit extends AbstractView {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${capitalizeFirst(type)} ${getPreposition(type)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=" ${destination}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
           <datalist id="destination-list-1">
             ${DESTINATIONS.map((city) => `<option value="${city}"></option>`).join(``)}
           </datalist>
@@ -205,6 +206,9 @@ export default class EventEdit extends AbstractView {
     this.getElement()
       .querySelector(`.event__section--offers`)
       .addEventListener(`change`, this._offerToggleHandler);
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, this._destinationChangeHandler);
   }
 
   _typeToggleHandler(evt) {
@@ -233,6 +237,14 @@ export default class EventEdit extends AbstractView {
     this.updateData({
       offers: this._data.offers
     }, true);
+  }
+
+  _destinationChangeHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      destination: evt.target.value
+    });
   }
 
   _closeButtonHandler(evt) {
