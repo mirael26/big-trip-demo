@@ -2,13 +2,20 @@ import EventView from "../view/event.js";
 import EventEditView from "../view/event-edit.js";
 import {render, replace, remove} from "../utils/render.js";
 
+const Mode = {
+  DEFAULT: `DEFAULT`,
+  EDITING: `EDITING`
+};
+
 export default class Event {
-  constructor(eventListContainer, changeData) {
+  constructor(eventListContainer, changeData, changeMode) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
@@ -17,14 +24,14 @@ export default class Event {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(event) {
-    this._event = event;
+  init(eventDate) {
+    this._event = eventDate;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
 
-    this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event);
+    this._eventComponent = new EventView(this._event);
+    this._eventEditComponent = new EventEditView(this._event);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
@@ -36,11 +43,11 @@ export default class Event {
       return;
     }
 
-    if (this._eventListContainer.contains(prevEventComponent.getElement())) {
+    if (this._mode === Mode.DEFAULT) {
       replace(this._eventComponent, prevEventComponent);
     }
 
-    if (this._eventListContainer.contains(prevEventEditComponent.getElement())) {
+    if (this._mode === Mode.EDITING) {
       replace(this._eventEditComponent, prevEventEditComponent);
     }
 
@@ -53,19 +60,29 @@ export default class Event {
     remove(this._eventEditComponent);
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToEvent();
+    }
+  }
+
   _replaceEventToForm() {
     replace(this._eventEditComponent, this._eventComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
+    this._changeMode();
+    this._mode = Mode.EDITING;
   }
 
   _replaceFormToEvent() {
     replace(this._eventComponent, this._eventEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    this._mode = Mode.DEFAULT;
   }
 
   _escKeyDownHandler(evt) {
     if (evt.key === `Escape` || evt.key === `Esc`) {
       evt.preventDefault();
+      this._eventEditComponent.reset(this._event);
       this._replaceFormToEvent();
     }
   }
@@ -75,6 +92,7 @@ export default class Event {
   }
 
   _handleCloseButtonClick() {
+    this._eventEditComponent.reset(this._event);
     this._replaceFormToEvent();
   }
 

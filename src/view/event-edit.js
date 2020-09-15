@@ -45,7 +45,6 @@ export default class EventEdit extends SmartView {
   }
 
   _createOfferTemplate(checkedOffers, currentType) {
-
     return `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
@@ -92,6 +91,12 @@ export default class EventEdit extends SmartView {
   </button>`;
   }
 
+  reset(event) {
+    this.updateData(
+        EventEdit.parseEventToData(event)
+    );
+  }
+
   _getTemplate() {
     const {
       type = `Bus`,
@@ -111,7 +116,6 @@ export default class EventEdit extends SmartView {
     const destinationTemplate = this._createDestinationTemplate(destinationInfo);
     const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite, isNewEvent);
     const closeButtonTemplate = this._createCloseButtonTemplate(isNewEvent);
-
     return (
       `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -241,13 +245,13 @@ export default class EventEdit extends SmartView {
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
 
-  static parseEventToData(eventData) {
+  static parseEventToData(event) {
     return Object.assign(
         {},
-        eventData,
+        event,
         {
-          isDestination: eventData.destination !== ``,
-          isNewEvent: Object.keys(eventData).length === 0 ? true : false,
+          isDestination: event.destination !== ``,
+          isNewEvent: Object.keys(event).length === 0 ? true : false,
         }
     );
   }
