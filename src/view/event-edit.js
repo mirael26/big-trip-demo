@@ -250,6 +250,7 @@ export default class EventEdit extends SmartView {
         {},
         event,
         {
+          offers: event.offers.slice(),
           isDestination: event.destination !== ``,
           isNewEvent: Object.keys(event).length === 0 ? true : false,
         }
