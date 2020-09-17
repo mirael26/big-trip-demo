@@ -193,11 +193,12 @@ export default class EventEdit extends SmartView {
 
   _offerToggleHandler(evt) {
     evt.preventDefault();
+    const targetOffer = evt.target.nextElementSibling.querySelector(`.event__offer-title`).textContent;
     const newOffer = OFFERS.find((element) => {
       return element.type === this._data.type;
     }).offers
       .find((element) => {
-        return element.title === evt.target.nextElementSibling.querySelector(`.event__offer-title`).textContent;
+        return element.title === targetOffer;
       });
     if (this._data.offers.includes(newOffer)) {
       this._data.offers = this._data.offers.filter((offer) => {
@@ -252,13 +253,19 @@ export default class EventEdit extends SmartView {
         {
           offers: event.offers.slice(),
           isDestination: event.destination !== ``,
-          isNewEvent: Object.keys(event).length === 0 ? true : false,
+          isNewEvent: !Object.keys(event).length ? true : false,
         }
     );
   }
 
   static parseDataToEvent(data) {
-    data = Object.assign({}, data);
+    data = Object.assign(
+        {},
+        data,
+        {
+          offers: data.offers.slice()
+        }
+    );
 
     delete data.isDestination;
     delete data.isNewEvent;
