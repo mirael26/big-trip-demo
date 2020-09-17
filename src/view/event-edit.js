@@ -1,4 +1,4 @@
-import {getPreposition, getCurrentDate, completeDateNubmer} from "../utils/event.js";
+import {getPreposition, getCurrentDate, formatFullDate} from "../utils/event.js";
 import {capitalizeFirst} from "../utils/common.js";
 import {EVENT_TYPES, DESTINATIONS, OFFERS} from "../const.js";
 import SmartView from "./smart.js";
@@ -23,11 +23,6 @@ export default class EventEdit extends SmartView {
 
     this._setInnerHandlers();
     this._setDatepicker();
-  }
-
-  _getEventEditDate(date) {
-    return `${completeDateNubmer(date.getDate())}/${completeDateNubmer(date.getMonth())}/${completeDateNubmer(date.getFullYear())}
- ${completeDateNubmer(date.getHours())}:${completeDateNubmer(date.getMinutes())}`;
   }
 
   _createTypeTemplate(type) {
@@ -145,12 +140,12 @@ export default class EventEdit extends SmartView {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${this._getEventEditDate(startDate)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatFullDate(startDate)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${this._getEventEditDate(endDate)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatFullDate(endDate)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

@@ -1,4 +1,5 @@
 import {EVENT_TYPES} from "../const.js";
+import moment from "moment";
 
 const sortEventsByDays = (events) => {
   const convertDay = (day) => {
@@ -41,8 +42,21 @@ const getShortDate = (date) => {
   return date.toLocaleString(`en-US`, {month: `short`, day: `numeric`}).toUpperCase();
 };
 
-const completeDateNubmer = (number) => {
-  return (`0` + number.toString()).slice(-2);
+const formatFullDate = (date) => {
+  return moment(date).format(`MM/DD/YY HH:mm`);
+};
+
+const formatTime = (date) => {
+  return moment(date).format(`HH:mm`);
+};
+
+const formatDuration = (startDate, endDate) => {
+  const duration = endDate - startDate;
+  const d = moment.duration(duration).days();
+  const h = moment.duration(duration).hours();
+  const m = moment.duration(duration).minutes();
+
+  return `${d ? `${d}D ` : ``}${h ? `${h}H ` : ``}${m ? `${m}M ` : ``}`;
 };
 
 const sortEventsByTime = (eventA, eventB) => {
@@ -53,4 +67,4 @@ const sortEventsByPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
-export {isNoEvents, getPreposition, getCurrentDate, completeDateNubmer, getShortDate, sortEventsByTime, sortEventsByPrice, sortEventsByDays};
+export {isNoEvents, getPreposition, getCurrentDate, formatFullDate, formatTime, formatDuration, getShortDate, sortEventsByTime, sortEventsByPrice, sortEventsByDays};
