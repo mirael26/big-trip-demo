@@ -12,9 +12,13 @@ const sortEventsByDays = (events) => {
 
   const eventsByDays = new Map();
   daysUniq.forEach((day) => {
-    eventsByDays.set(day, events.filter((event) => {
-      return convertDay(event.startDate) === day;
-    }));
+    eventsByDays.set(day, events
+      .filter((event) => {
+        return convertDay(event.startDate) === day;
+      })
+      .sort((a, b) => {
+        return a.startDate - b.startDate;
+      }));
   });
   return eventsByDays;
 };

@@ -1,11 +1,11 @@
 import SortView from "../view/sort.js";
-import EventEditView from "../view/event-edit.js";
 import EventListView from "../view/event-list.js";
 import EventDayView from "../view/event-day.js";
 import EventDayListView from "../view/event-day-list.js";
-import EventView from "../view/event.js";
 import NoEventsView from "../view/no-events.js";
-import {render, replace} from "../utils/render.js";
+import EventPresenter from "./event.js";
+import {render} from "../utils/render.js";
+import {updateItem} from "../utils/common.js";
 import {sortEventsByDays, sortEventsByTime, sortEventsByPrice} from "../utils/event.js";
 import {SortType} from "../const.js";
 
@@ -13,18 +13,32 @@ export default class Trip {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
     this._currentSortType = SortType.DEFAULT;
+    this._eventPresenter = {};
 
     this._eventListComponent = new EventListView();
     this._noEventsComponent = new NoEventsView();
+    this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleEventChange = this._handleEventChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(tripEvents) {
     this._tripEventsList = tripEvents;
-    this._tripEventsByDays = sortEventsByDays(tripEvents);
+    this._tripEventsByDays = sortEventsByDays(this._tripEventsList);
     this._tripEvents = this._tripEventsByDays;
 
     this._renderBoard();
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._eventPresenter)
+      .forEach((presenter) => presenter.resetView());
+  }
+
+  _handleEventChange(updatedEvent) {
+    this._tripEventsList = updateItem(this._tripEventsList, updatedEvent);
+    this._eventPresenter[updatedEvent.id].init(updatedEvent);
   }
 
   _sortTasks(sortType) {
@@ -59,36 +73,9 @@ export default class Trip {
   }
 
   _renderEvent(eventList, event) {
-    const eventComponent = new EventView(event);
-    const eventEditComponent = new EventEditView(event);
-
-    const replaceEventToForm = () => {
-      replace(eventEditComponent, eventComponent);
-    };
-
-    const replaceFormToEvent = () => {
-      replace(eventComponent, eventEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        evt.preventDefault();
-        replaceFormToEvent();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    eventComponent.setEditClickHandler(() => {
-      replaceEventToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditComponent.setFormSubmitHadler(() => {
-      replaceFormToEvent();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    render(eventList, eventComponent, `beforeend`);
+    const eventPresenter = new EventPresenter(eventList, this._handleEventChange, this._handleModeChange);
+    eventPresenter.init(event);
+    this._eventPresenter[event.id] = eventPresenter;
   }
 
   _renderNoEvents() {
@@ -115,6 +102,10 @@ export default class Trip {
 
   _clearEventList() {
     this._eventListComponent.getElement().innerHTML = ``;
+    Object
+      .values(this._eventPresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._eventPresenter = {};
   }
 
   _renderBoard() {

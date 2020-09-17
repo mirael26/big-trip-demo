@@ -13,7 +13,9 @@ const TIME_MINUTES_STEP = 5;
 const PRICE_MIN = 200;
 const PRICE_MAX = 600;
 const OPTIONS_MIN = 0;
-const OPTIONS_MAX = 4;
+const OPTIONS_MAX = 3;
+
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
 
 const generateDate = () => {
   const daysGap = getRandomInteger(DAYS_MIN, DAYS_MAX);
@@ -50,14 +52,28 @@ export const generateEvent = () => {
   const price = Math.round(getRandomInteger(PRICE_MIN, PRICE_MAX) / 10) * 10;
 
   const offersCount = getRandomInteger(OPTIONS_MIN, OPTIONS_MAX);
-  const offers = new Array(offersCount).fill().map(() => {
-    return getRandomElement(OFFERS);
-  });
+
+  const getOffers = (pointType) => {
+    const offersArray = [];
+    while (offersArray.length < offersCount) {
+      const newElement = getRandomElement(OFFERS.find((element) => {
+        return element.type === pointType;
+      }).offers);
+      if (!offersArray.includes(newElement)) {
+        offersArray.push(newElement);
+      }
+    }
+
+    return offersArray;
+  };
 
   const allEventTypes = EVENT_TYPES.transfer.concat(EVENT_TYPES.activity);
+  const type = getRandomElement(allEventTypes);
+  const offers = getOffers(type);
 
   return {
-    type: getRandomElement(allEventTypes),
+    id: generateId(),
+    type,
     destination: getRandomElement(DESTINATIONS),
     destinationInfo: {
       description,
@@ -67,5 +83,6 @@ export const generateEvent = () => {
     endDate: days[1],
     price,
     offers,
+    isFavorite: Boolean(getRandomInteger(0, 1)),
   };
 };
