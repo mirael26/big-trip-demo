@@ -1,10 +1,10 @@
-import {isNoEvents, getShortDate} from "../utils/event.js";
+import {isNoEvents, getShortDate, getEventsInOrder} from "../utils/event.js";
 import AbstractView from "./abstract.js";
 
 export default class TripInfo extends AbstractView {
   constructor(events) {
     super();
-    this._events = events;
+    this._events = getEventsInOrder(events);
   }
 
   _getTemplate() {

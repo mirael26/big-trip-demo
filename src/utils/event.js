@@ -1,12 +1,20 @@
 import {EVENT_TYPES} from "../const.js";
 import moment from "moment";
 
+const getEventsInOrder = (events) => {
+  return events.slice().sort((a, b) => {
+    return a.startDate - b.startDate;
+  });
+};
+
 const sortEventsByDays = (events) => {
+  const eventsInOrder = getEventsInOrder(events);
+
   const convertDay = (day) => {
     return day.toLocaleString(`en-US`, {year: `numeric`, month: `short`, day: `numeric`}).toUpperCase();
   };
 
-  const days = events.map((object) => {
+  const days = eventsInOrder.map((object) => {
     return convertDay(object.startDate);
   });
   const daysUniq = new Set(days);
@@ -67,4 +75,4 @@ const sortEventsByPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
-export {isNoEvents, getPreposition, getCurrentDate, formatFullDate, formatTime, formatDuration, getShortDate, sortEventsByTime, sortEventsByPrice, sortEventsByDays};
+export {getEventsInOrder, isNoEvents, getPreposition, getCurrentDate, formatFullDate, formatTime, formatDuration, getShortDate, sortEventsByTime, sortEventsByPrice, sortEventsByDays};
