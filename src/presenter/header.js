@@ -7,7 +7,8 @@ import FilterView from "../view/filter.js";
 import {render} from "../utils/render.js";
 
 export default class Header {
-  constructor(headerContainer) {
+  constructor(headerContainer, eventsModel) {
+    this._eventsModel = eventsModel;
     this._headerContainer = headerContainer;
 
     this._tripInfoContainerComponent = new TripInfoContainerView();
@@ -16,23 +17,27 @@ export default class Header {
     this._filterComponent = new FilterView();
   }
 
-  init(eventsInfo) {
-    this._eventsInfo = eventsInfo;
+  init() {
+    // this._eventsInfo = eventsInfo;
 
     this._renderHeader();
   }
 
+  _getEvents() {
+    return this._eventsModel.getEvents();
+  }
+
   _renderTripInfo() {
-    render(this._tripInfoContainerComponent, new TripInfoView(this._eventsInfo), `afterbegin`);
+    render(this._tripInfoContainerComponent, new TripInfoView(this._getEvents()), `afterbegin`);
   }
 
   _renderTripCost() {
-    render(this._tripInfoContainerComponent, new TripCostView(this._eventsInfo), `beforeend`);
+    render(this._tripInfoContainerComponent, new TripCostView(this._getEvents()), `beforeend`);
   }
 
   _renderTripInfoContainer() {
     render(this._headerContainer, this._tripInfoContainerComponent, `afterbegin`);
-    if (this._eventsInfo.length > 0) {
+    if (this._getEvents().length) {
       this._renderTripInfo();
     }
     this._renderTripCost();
