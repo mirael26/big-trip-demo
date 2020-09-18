@@ -6,15 +6,15 @@ export default class Smart extends Abstract {
     this._data = {};
   }
 
-  updateData(update, justDataUpdating) {
-    if (!update) {
+  updateData(updatedItem, justDataUpdating) {
+    if (!updatedItem) {
       return;
     }
 
     this._data = Object.assign(
         {},
         this._data,
-        update
+        updatedItem
     );
 
     if (justDataUpdating) {
@@ -32,7 +32,6 @@ export default class Smart extends Abstract {
     const newElement = this.getElement();
 
     parent.replaceChild(newElement, prevElement);
-    prevElement = null;
 
     this.restoreHandlers();
   }

@@ -46,7 +46,7 @@ export default class Header {
     render(this._tripControlsComponent, this._filterComponent, `beforeend`);
   }
 
-  _rednerTripControls() {
+  _renderTripControls() {
     render(this._headerContainer, this._tripControlsComponent, `afterbegin`);
     this._renderSiteMenu();
     this._renderFilter();
@@ -55,7 +55,7 @@ export default class Header {
   _renderHeader() {
     render(this._headerContainer, this._tripInfoContainerComponent, `afterbegin`);
 
-    this._rednerTripControls();
+    this._renderTripControls();
     this._renderTripInfoContainer();
   }
 }

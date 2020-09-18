@@ -1,25 +1,28 @@
-import {getPreposition, getCurrentDate, completeDateNubmer} from "../utils/event.js";
+import {getPreposition, getCurrentDate, formatFullDate} from "../utils/event.js";
 import {capitalizeFirst} from "../utils/common.js";
 import {EVENT_TYPES, DESTINATIONS, OFFERS} from "../const.js";
 import SmartView from "./smart.js";
+import flatpickr from "flatpickr";
+
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 export default class EventEdit extends SmartView {
   constructor(eventData) {
     super();
     this._data = EventEdit.parseEventToData(eventData);
-    this._closeButtonHandler = this._closeButtonHandler.bind(this);
-    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
-    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._datepicker = null;
+
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
-    this._offerToggleHandler = this._offerToggleHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._offerToggleHandler = this._offerToggleHandler.bind(this);
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._closeButtonHandler = this._closeButtonHandler.bind(this);
 
     this._setInnerHandlers();
-  }
-
-  _getEventEditDate(date) {
-    return `${completeDateNubmer(date.getDate())}/${completeDateNubmer(date.getMonth())}/${completeDateNubmer(date.getFullYear())}
- ${completeDateNubmer(date.getHours())}:${completeDateNubmer(date.getMinutes())}`;
+    this._setDatepicker();
   }
 
   _createTypeTemplate(type) {
@@ -116,6 +119,8 @@ export default class EventEdit extends SmartView {
     const destinationTemplate = this._createDestinationTemplate(destinationInfo);
     const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite, isNewEvent);
     const closeButtonTemplate = this._createCloseButtonTemplate(isNewEvent);
+
+    const isSubmitDisabled = this._data.startDate > this._data.endDate;
     return (
       `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -135,12 +140,12 @@ export default class EventEdit extends SmartView {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${this._getEventEditDate(startDate)}">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${formatFullDate(startDate)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${this._getEventEditDate(endDate)}">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${formatFullDate(endDate)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -151,7 +156,7 @@ export default class EventEdit extends SmartView {
           <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
         </div>
 
-        <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+        <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? `disabled` : ``}>Save</button>
         <button class="event__reset-btn" type="reset">${isNewEvent ? `Cancel` : `Delete`}</button>
 
         ${favoriteButtonTemplate}
@@ -167,9 +172,41 @@ export default class EventEdit extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setCloseButtonClickHandler(this._callback.closeButtonClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
+  }
+
+  _setDatepicker() {
+    if (this._startDatepicker || this._endDatepicker) {
+      this._startDatepicker.destroy();
+      this._endDatepicker.destroy();
+      this._startDatepicker = null;
+      this._endDatepicker = null;
+    }
+
+    this._startDatepicker = flatpickr(
+        this.getElement().querySelector(`#event-start-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `d/m/y H:i`,
+          defaultDate: this._data.startDate,
+          minDate: Date.now(),
+          onChange: this._startDateChangeHandler
+        }
+    );
+
+    this._endDatepicker = flatpickr(
+        this.getElement().querySelector(`#event-end-time-1`),
+        {
+          enableTime: true,
+          dateFormat: `d/m/y H:i`,
+          defaultDate: this._data.endDate,
+          minDate: Date.now(),
+          onChange: this._endDateChangeHandler
+        }
+    );
   }
 
   _setInnerHandlers() {
@@ -193,11 +230,12 @@ export default class EventEdit extends SmartView {
 
   _offerToggleHandler(evt) {
     evt.preventDefault();
+    const targetOffer = evt.target.nextElementSibling.querySelector(`.event__offer-title`).textContent;
     const newOffer = OFFERS.find((element) => {
       return element.type === this._data.type;
     }).offers
       .find((element) => {
-        return element.title === evt.target.nextElementSibling.querySelector(`.event__offer-title`).textContent;
+        return element.title === targetOffer;
       });
     if (this._data.offers.includes(newOffer)) {
       this._data.offers = this._data.offers.filter((offer) => {
@@ -217,6 +255,18 @@ export default class EventEdit extends SmartView {
 
     this.updateData({
       destination: evt.target.value
+    });
+  }
+
+  _startDateChangeHandler(selectedDates) {
+    this.updateData({
+      startDate: selectedDates[0]
+    });
+  }
+
+  _endDateChangeHandler(selectedDates) {
+    this.updateData({
+      endDate: selectedDates[0]
     });
   }
 
@@ -252,13 +302,19 @@ export default class EventEdit extends SmartView {
         {
           offers: event.offers.slice(),
           isDestination: event.destination !== ``,
-          isNewEvent: Object.keys(event).length === 0 ? true : false,
+          isNewEvent: !Object.keys(event).length ? true : false,
         }
     );
   }
 
   static parseDataToEvent(data) {
-    data = Object.assign({}, data);
+    data = Object.assign(
+        {},
+        data,
+        {
+          offers: data.offers.slice()
+        }
+    );
 
     delete data.isDestination;
     delete data.isNewEvent;

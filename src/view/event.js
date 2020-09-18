@@ -1,5 +1,5 @@
 import AbstractView from "./abstract.js";
-import {completeDateNubmer, getPreposition} from "../utils/event.js";
+import {getPreposition, formatTime, formatDuration} from "../utils/event.js";
 import {capitalizeFirst} from "../utils/common.js";
 
 const SHOW_OFFER_MAX = 3;
@@ -24,30 +24,6 @@ export default class Event extends AbstractView {
   _getTemplate() {
     const {type, destination, startDate, endDate, price, offers} = this._event;
 
-    const startTimeHours = completeDateNubmer(startDate.getHours());
-    const startTimeMinutes = completeDateNubmer(startDate.getMinutes());
-    const endTimeHours = completeDateNubmer(endDate.getHours());
-    const endTimeMinutes = completeDateNubmer(endDate.getMinutes());
-    const duration = (endDate - startDate);
-
-    const convertDuration = (millisec) => {
-      let minutes = (millisec / (1000 * 60)).toFixed(0);
-      let hours = completeDateNubmer(Math.floor(minutes / 60));
-      let days = ``;
-      if (hours >= 24) {
-        days = completeDateNubmer(Math.floor(hours / 24));
-        hours = hours - (days * 24);
-      }
-
-      minutes = completeDateNubmer(Math.floor(minutes % 60));
-      if (days !== ``) {
-        return `${days}D ${hours}H ${minutes}M`;
-      } else if (hours > 0) {
-        return `${hours}H ${minutes}M`;
-      }
-      return `${minutes}M`;
-    };
-
     const offersTemplate = this._createOffersTemplate(offers);
 
     return (
@@ -60,11 +36,11 @@ export default class Event extends AbstractView {
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${startDate.toISOString()}">${startTimeHours}:${startTimeMinutes}</time>
+            <time class="event__start-time" datetime="${startDate.toISOString()}">${formatTime(startDate)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${endDate.toISOString()}">${endTimeHours}:${endTimeMinutes}</time>
+            <time class="event__end-time" datetime="${endDate.toISOString()}">${formatTime(endDate)}</time>
           </p>
-          <p class="event__duration">${convertDuration(duration)}</p>
+          <p class="event__duration">${formatDuration(startDate, endDate)}</p>
         </div>
 
         <p class="event__price">
