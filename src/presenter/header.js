@@ -6,17 +6,20 @@ import {render, remove} from "../utils/render.js";
 import {UpdateType} from "../const.js";
 
 export default class Header {
-  constructor(headerContainer, eventsModel) {
+  constructor(headerContainer, eventsModel, filterModel) {
     this._eventsModel = eventsModel;
+    this._filterModel = filterModel;
     this._headerContainer = headerContainer;
 
     this._tripInfoComponent = null;
     this._tripControlsComponent = new TripControlsView();
     this._siteMenuComponent = new SiteMenuView();
-    this._filterComponent = new FilterView();
+    this._filterComponent = null;
     this._headerHandleModelChange = this._headerHandleModelChange.bind(this);
+    this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
 
     this._eventsModel.addObserver(this._headerHandleModelChange);
+    this._filterModel.addObserver(this._headerHandleModelChange);
   }
 
   init() {
@@ -38,8 +41,18 @@ export default class Header {
         this._renderTripInfo();
         break;
       case UpdateType.MAJOR:
+        this._clearFilter();
+        this._renderFilter();
         break;
     }
+  }
+
+  _handleFilterTypeChange(filterType) {
+    if (this._currentFilter === filterType) {
+      return;
+    }
+
+    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
   }
 
   _renderTripInfo() {
@@ -60,7 +73,16 @@ export default class Header {
   }
 
   _renderFilter() {
+    if (this._filterComponent !== null) {
+      this._filterComponent = null;
+    }
+    this._filterComponent = new FilterView(this._filterModel.getFilter());
     render(this._tripControlsComponent, this._filterComponent, `beforeend`);
+    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+  }
+
+  _clearFilter() {
+    remove(this._filterComponent);
   }
 
   _renderTripControls() {
@@ -73,4 +95,6 @@ export default class Header {
     this._renderTripControls();
     this._renderTripInfo();
   }
+
+
 }

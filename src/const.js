@@ -206,4 +206,10 @@ const UpdateType = {
   MAJOR: `MAJOR`
 };
 
-export {EVENT_TYPES, DESTINATIONS, EVENT_DESCRIPTIONS, OFFERS, SortType, UserAction, UpdateType};
+const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
+};
+
+export {EVENT_TYPES, DESTINATIONS, EVENT_DESCRIPTIONS, OFFERS, SortType, UserAction, UpdateType, FilterType};
