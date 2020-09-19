@@ -16,6 +16,7 @@ export default class EventEdit extends SmartView {
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
+    this._priceChangeHandler = this._priceChangeHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._offerToggleHandler = this._offerToggleHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
@@ -216,11 +217,14 @@ export default class EventEdit extends SmartView {
       .querySelector(`.event__type-list`)
       .addEventListener(`change`, this._typeToggleHandler);
     this.getElement()
+        .querySelector(`.event__input--destination`)
+        .addEventListener(`change`, this._destinationChangeHandler);
+    this.getElement()
       .querySelector(`.event__section--offers`)
       .addEventListener(`change`, this._offerToggleHandler);
     this.getElement()
-      .querySelector(`.event__input--destination`)
-      .addEventListener(`change`, this._destinationChangeHandler);
+      .querySelector(`.event__input--price`)
+      .addEventListener(`change`, this._priceChangeHandler);
   }
 
   _typeToggleHandler(evt) {
@@ -270,6 +274,14 @@ export default class EventEdit extends SmartView {
     this.updateData({
       endDate: selectedDates[0]
     });
+  }
+
+  _priceChangeHandler(evt) {
+    evt.preventDefault();
+
+    this.updateData({
+      price: parseInt(evt.target.value, 10)
+    }, true);
   }
 
   _formSubmitHandler(evt) {
