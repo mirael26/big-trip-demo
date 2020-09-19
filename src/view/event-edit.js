@@ -132,7 +132,7 @@ export default class EventEdit extends SmartView {
     const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite, isNewEvent);
     const closeButtonTemplate = this._createCloseButtonTemplate(isNewEvent);
 
-    const isSubmitDisabled = this._data.startDate > this._data.endDate;
+    const isSubmitDisabled = this._data.startDate > this._data.endDate || !DESTINATIONS.some((destinationItem) => destinationItem === this._data.destination);
     return (
       `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -142,7 +142,7 @@ export default class EventEdit extends SmartView {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${capitalizeFirst(type)} ${getPreposition(type)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1" pattern="${DESTINATIONS.join(`|`)}">
           <datalist id="destination-list-1">
             ${DESTINATIONS.map((city) => `<option value="${city}"></option>`).join(``)}
           </datalist>
@@ -165,7 +165,7 @@ export default class EventEdit extends SmartView {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+          <input class="event__input  event__input--price" id="event-price-1" type="number" name="event-price" value="${price}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? `disabled` : ``}>Save</button>
