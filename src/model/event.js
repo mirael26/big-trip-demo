@@ -39,8 +39,8 @@ export default class Event extends Observer {
     this._notify(updateType, updatedItem);
   }
 
-  deleteEvent(updateType, update) {
-    const index = this._events.findIndex((event) => event.id === update.id);
+  deleteEvent(updateType, updatedItem) {
+    const index = this._events.findIndex((event) => event.id === updatedItem.id);
 
     if (index === -1) {
       throw new Error(`Can't delete unexisting event`);

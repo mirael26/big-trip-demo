@@ -19,7 +19,8 @@ export default class EventEdit extends SmartView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._offerToggleHandler = this._offerToggleHandler.bind(this);
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-    this._closeButtonHandler = this._closeButtonHandler.bind(this);
+    this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
+    this._deleteClickHandler = this._deleteClickHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepicker();
@@ -175,6 +176,7 @@ export default class EventEdit extends SmartView {
     this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setCloseButtonClickHandler(this._callback.closeButtonClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 
@@ -270,14 +272,19 @@ export default class EventEdit extends SmartView {
     });
   }
 
-  _closeButtonHandler(evt) {
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit(EventEdit.parseDataToEvent(this._data));
+  }
+
+  _closeButtonClickHandler(evt) {
     evt.preventDefault();
     this._callback.closeButtonClick();
   }
 
-  _formSubmitHandler(evt) {
+  _deleteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(EventEdit.parseDataToEvent(this._data));
+    this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
   }
 
   _favoriteClickHandler(evt) {
@@ -285,14 +292,19 @@ export default class EventEdit extends SmartView {
     this._callback.favoriteClick();
   }
 
-  setCloseButtonClickHandler(callback) {
-    this._callback.closeButtonClick = callback;
-    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._closeButtonHandler);
-  }
-
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  setCloseButtonClickHandler(callback) {
+    this._callback.closeButtonClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._closeButtonClickHandler);
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._deleteClickHandler);
   }
 
   static parseEventToData(event) {

@@ -22,11 +22,12 @@ export default class Event {
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(eventDate) {
-    this._event = eventDate;
+  init(eventData) {
+    this._event = eventData;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
@@ -37,6 +38,7 @@ export default class Event {
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setCloseButtonClickHandler(this._handleCloseButtonClick);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
     this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
@@ -105,18 +107,31 @@ export default class Event {
             {},
             this._event,
             {
-              isFavorite: !this._task.isFavorite
+              isFavorite: !this._event.isFavorite
             }
         )
     );
   }
 
-  _handleFormSubmit(event) {
+  _handleFormSubmit(updatedEvent) {
+    const isMinorUpdate =
+      updatedEvent.startDate !== this._event.startDate ||
+      updatedEvent.endDate !== this._event.endDate ||
+      updatedEvent.price !== this._event.price;
+
     this._changeData(
         UserAction.UPDATE_EVENT,
-        UpdateType.MINOR,
-        event
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        updatedEvent
     );
     this._replaceFormToEvent();
+  }
+
+  _handleDeleteClick(deletedEvent) {
+    this._changeData(
+        UserAction.DELETE_EVENT,
+        UpdateType.MINOR,
+        deletedEvent
+    );
   }
 }
