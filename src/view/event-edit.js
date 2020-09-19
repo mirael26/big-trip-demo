@@ -6,8 +6,18 @@ import flatpickr from "flatpickr";
 
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
+const BLANK_EVENT = {
+  type: `taxi`,
+  destination: ``,
+  startDate: getCurrentDate(),
+  endDate: getCurrentDate(),
+  price: ``,
+  offers: [],
+  isFavorite: false,
+};
+
 export default class EventEdit extends SmartView {
-  constructor(eventData) {
+  constructor(eventData = BLANK_EVENT) {
     super();
     this._data = EventEdit.parseEventToData(eventData);
     this._datepicker = null;
@@ -104,21 +114,21 @@ export default class EventEdit extends SmartView {
 
   _getTemplate() {
     const {
-      type = `Bus`,
-      destination = ``,
-      destinationInfo = ``,
-      startDate = getCurrentDate(),
-      endDate = getCurrentDate(),
-      price = ``,
-      offers = ``,
-      isFavorite = false,
+      type,
+      destination,
+      destinationInfo,
+      startDate,
+      endDate,
+      price,
+      offers,
+      isFavorite,
       isDestination,
       isNewEvent,
     } = this._data;
 
     const typeTemplate = this._createTypeTemplate(type);
     const offerTemplate = this._createOfferTemplate(offers, type);
-    const destinationTemplate = this._createDestinationTemplate(destinationInfo);
+    const destinationTemplate = isDestination ? this._createDestinationTemplate(destinationInfo) : ``;
     const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite, isNewEvent);
     const closeButtonTemplate = this._createCloseButtonTemplate(isNewEvent);
 
@@ -166,7 +176,7 @@ export default class EventEdit extends SmartView {
       </header>
       <section class="event__details">
         ${offerTemplate}
-        ${isDestination ? destinationTemplate : ``}
+        ${destinationTemplate}
       </section>
       </form>`
     );
@@ -325,8 +335,7 @@ export default class EventEdit extends SmartView {
         event,
         {
           offers: event.offers.slice(),
-          isDestination: event.destination !== ``,
-          isNewEvent: !Object.keys(event).length ? true : false,
+          isDestination: event.destination !== ``
         }
     );
   }

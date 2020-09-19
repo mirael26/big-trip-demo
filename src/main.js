@@ -22,3 +22,8 @@ const boardElement = siteMainElement.querySelector(`.trip-events`);
 
 const tripPresenter = new TripPresenter(boardElement, eventsModel, filterModel);
 tripPresenter.init();
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripPresenter.createEvent();
+});

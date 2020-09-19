@@ -4,9 +4,10 @@ import EventDayView from "../view/event-day.js";
 import EventDayListView from "../view/event-day-list.js";
 import NoEventsView from "../view/no-events.js";
 import EventPresenter from "./event.js";
+import NewEventPresenter from "./new-event.js";
 import {render, remove} from "../utils/render.js";
 import {sortEventsByDays, sortEventsByTime, sortEventsByPrice} from "../utils/event.js";
-import {SortType, UserAction, UpdateType} from "../const.js";
+import {SortType, UserAction, UpdateType, FilterType} from "../const.js";
 import {filter} from "../utils/filter.js";
 
 export default class Trip {
@@ -30,11 +31,19 @@ export default class Trip {
 
     this._eventsModel.addObserver(this._boardHandleModelChange);
     this._filterModel.addObserver(this._boardHandleModelChange);
+
+    this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction);
   }
 
   init() {
 
     this._renderBoard();
+  }
+
+  createEvent() {
+    this._currentSortType = SortType.DEFAULT;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._newEventPresenter.init();
   }
 
   _getEvents() {
