@@ -1,25 +1,25 @@
-import TripInfoContainerView from "../view/trip-info-container.js";
 import TripInfoView from "../view/trip-info.js";
-import TripCostView from "../view/trip-cost.js";
 import TripControlsView from "../view/trip-controls.js";
 import SiteMenuView from "../view/site-menu.js";
 import FilterView from "../view/filter.js";
-import {render} from "../utils/render.js";
+import {render, remove} from "../utils/render.js";
+import {UpdateType} from "../const.js";
 
 export default class Header {
   constructor(headerContainer, eventsModel) {
     this._eventsModel = eventsModel;
     this._headerContainer = headerContainer;
 
-    this._tripInfoContainerComponent = new TripInfoContainerView();
+    this._tripInfoComponent = null;
     this._tripControlsComponent = new TripControlsView();
     this._siteMenuComponent = new SiteMenuView();
     this._filterComponent = new FilterView();
+    this._headerHandleModelChange = this._headerHandleModelChange.bind(this);
+
+    this._eventsModel.addObserver(this._headerHandleModelChange);
   }
 
   init() {
-    // this._eventsInfo = eventsInfo;
-
     this._renderHeader();
   }
 
@@ -27,20 +27,32 @@ export default class Header {
     return this._eventsModel.getEvents();
   }
 
-  _renderTripInfo() {
-    render(this._tripInfoContainerComponent, new TripInfoView(this._getEvents()), `afterbegin`);
-  }
-
-  _renderTripCost() {
-    render(this._tripInfoContainerComponent, new TripCostView(this._getEvents()), `beforeend`);
-  }
-
-  _renderTripInfoContainer() {
-    render(this._headerContainer, this._tripInfoContainerComponent, `afterbegin`);
-    if (this._getEvents().length) {
-      this._renderTripInfo();
+  _headerHandleModelChange(updateType) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._clearTripInfo();
+        this._renderTripInfo();
+        break;
+      case UpdateType.MINOR:
+        this._clearTripInfo();
+        this._renderTripInfo();
+        break;
+      case UpdateType.MAJOR:
+        break;
     }
-    this._renderTripCost();
+  }
+
+  _renderTripInfo() {
+    if (this._tripInfoComponent !== null) {
+      this._tripInfoComponent = null;
+    }
+
+    this._tripInfoComponent = new TripInfoView(this._getEvents());
+    render(this._headerContainer, this._tripInfoComponent, `afterbegin`);
+  }
+
+  _clearTripInfo() {
+    remove(this._tripInfoComponent);
   }
 
   _renderSiteMenu() {
@@ -58,9 +70,7 @@ export default class Header {
   }
 
   _renderHeader() {
-    render(this._headerContainer, this._tripInfoContainerComponent, `afterbegin`);
-
     this._renderTripControls();
-    this._renderTripInfoContainer();
+    this._renderTripInfo();
   }
 }

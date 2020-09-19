@@ -32,10 +32,6 @@ const sortEventsByDays = (events) => {
   return eventsByDays;
 };
 
-const isNoEvents = (events) => {
-  return events.length === 0;
-};
-
 const getPreposition = (type) => {
   return EVENT_TYPES.activity.includes(type) ? `in` : `to`;
 };
@@ -75,4 +71,4 @@ const sortEventsByPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
-export {getEventsInOrder, isNoEvents, getPreposition, getCurrentDate, formatFullDate, formatTime, formatDuration, getShortDate, sortEventsByTime, sortEventsByPrice, sortEventsByDays};
+export {getEventsInOrder, getPreposition, getCurrentDate, formatFullDate, formatTime, formatDuration, getShortDate, sortEventsByTime, sortEventsByPrice, sortEventsByDays};
