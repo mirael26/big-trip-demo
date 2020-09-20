@@ -1,41 +1,71 @@
-import TripInfoContainerView from "../view/trip-info-container.js";
 import TripInfoView from "../view/trip-info.js";
-import TripCostView from "../view/trip-cost.js";
 import TripControlsView from "../view/trip-controls.js";
 import SiteMenuView from "../view/site-menu.js";
 import FilterView from "../view/filter.js";
-import {render} from "../utils/render.js";
+import {render, remove} from "../utils/render.js";
+import {UpdateType} from "../const.js";
 
 export default class Header {
-  constructor(headerContainer) {
+  constructor(headerContainer, eventsModel, filterModel) {
+    this._eventsModel = eventsModel;
+    this._filterModel = filterModel;
     this._headerContainer = headerContainer;
 
-    this._tripInfoContainerComponent = new TripInfoContainerView();
+    this._tripInfoComponent = null;
     this._tripControlsComponent = new TripControlsView();
     this._siteMenuComponent = new SiteMenuView();
-    this._filterComponent = new FilterView();
+    this._filterComponent = null;
+    this._headerHandleModelChange = this._headerHandleModelChange.bind(this);
+    this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
+
+    this._eventsModel.addObserver(this._headerHandleModelChange);
+    this._filterModel.addObserver(this._headerHandleModelChange);
   }
 
-  init(eventsInfo) {
-    this._eventsInfo = eventsInfo;
-
+  init() {
     this._renderHeader();
   }
 
-  _renderTripInfo() {
-    render(this._tripInfoContainerComponent, new TripInfoView(this._eventsInfo), `afterbegin`);
+  _getEvents() {
+    return this._eventsModel.getEvents();
   }
 
-  _renderTripCost() {
-    render(this._tripInfoContainerComponent, new TripCostView(this._eventsInfo), `beforeend`);
-  }
-
-  _renderTripInfoContainer() {
-    render(this._headerContainer, this._tripInfoContainerComponent, `afterbegin`);
-    if (this._eventsInfo.length > 0) {
-      this._renderTripInfo();
+  _headerHandleModelChange(updateType) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._clearTripInfo();
+        this._renderTripInfo();
+        break;
+      case UpdateType.MINOR:
+        this._clearTripInfo();
+        this._renderTripInfo();
+        break;
+      case UpdateType.MAJOR:
+        this._clearFilter();
+        this._renderFilter();
+        break;
     }
-    this._renderTripCost();
+  }
+
+  _handleFilterTypeChange(filterType) {
+    if (this._currentFilter === filterType) {
+      return;
+    }
+
+    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
+  }
+
+  _renderTripInfo() {
+    if (this._tripInfoComponent !== null) {
+      this._tripInfoComponent = null;
+    }
+
+    this._tripInfoComponent = new TripInfoView(this._getEvents());
+    render(this._headerContainer, this._tripInfoComponent, `afterbegin`);
+  }
+
+  _clearTripInfo() {
+    remove(this._tripInfoComponent);
   }
 
   _renderSiteMenu() {
@@ -43,7 +73,16 @@ export default class Header {
   }
 
   _renderFilter() {
+    if (this._filterComponent !== null) {
+      this._filterComponent = null;
+    }
+    this._filterComponent = new FilterView(this._filterModel.getFilter());
     render(this._tripControlsComponent, this._filterComponent, `beforeend`);
+    this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+  }
+
+  _clearFilter() {
+    remove(this._filterComponent);
   }
 
   _renderTripControls() {
@@ -53,9 +92,9 @@ export default class Header {
   }
 
   _renderHeader() {
-    render(this._headerContainer, this._tripInfoContainerComponent, `afterbegin`);
-
     this._renderTripControls();
-    this._renderTripInfoContainer();
+    this._renderTripInfo();
   }
+
+
 }
