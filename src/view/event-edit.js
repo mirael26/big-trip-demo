@@ -240,7 +240,8 @@ export default class EventEdit extends SmartView {
   _typeToggleHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      type: evt.target.value
+      type: evt.target.value,
+      offers: []
     });
   }
 
