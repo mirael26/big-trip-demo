@@ -203,6 +203,7 @@ export default class EventEdit extends SmartView {
         this.getElement().querySelector(`#event-start-time-1`),
         {
           enableTime: true,
+          time_24hr: true,
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.startDate,
           minDate: Date.now(),
@@ -214,6 +215,7 @@ export default class EventEdit extends SmartView {
         this.getElement().querySelector(`#event-end-time-1`),
         {
           enableTime: true,
+          time_24hr: true,
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.endDate,
           minDate: Date.now(),
