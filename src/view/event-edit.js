@@ -84,7 +84,7 @@ export default class EventEdit extends SmartView {
 
     <div class="event__photos-container">
       <div class="event__photos-tape">
-        ${destinationInfo.photo.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``)}
+        ${destinationInfo.photo.map((photo) => `<img class="event__photo" src="${photo.src}" alt="Event photo">`).join(``)}
       </div>
     </div>
   </section>`;

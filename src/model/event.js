@@ -6,8 +6,9 @@ export default class Event extends Observer {
     this._events = [];
   }
 
-  setEvents(events) {
+  setEvents(updateType, events) {
     this._events = events.slice();
+    this._notify(updateType);
   }
 
   getEvents() {
@@ -52,5 +53,59 @@ export default class Event extends Observer {
     ];
 
     this._notify(updateType);
+  }
+
+  static adaptToClient(event) {
+    const adaptedEvent = Object.assign(
+        {},
+        event,
+        {
+          destination: event.destination.name,
+          destinationInfo: {
+            description: event.destination.description,
+            photo: event.destination.pictures
+          },
+          startDate: event.date_from ? new Date(event.date_from) : ``,
+          endDate: event.date_to ? new Date(event.date_to) : ``,
+          isFavorite: event.is_favorite,
+          price: event.base_price
+        }
+    );
+
+    delete adaptedEvent.destination.name;
+    delete adaptedEvent.destination.description;
+    delete adaptedEvent.destination.pictures;
+    delete adaptedEvent.date_from;
+    delete adaptedEvent.date_to;
+    delete adaptedEvent.is_favorite;
+    delete adaptedEvent.base_price;
+
+    return adaptedEvent;
+  }
+
+  static adaptToServer(event) {
+    const adaptedEvent = Object.assign(
+        {},
+        event,
+        {
+          "destination": {
+            "description": event.destinationInfo.description,
+            "name": event.destination,
+            "pictures": event.destinationInfo.photo
+          },
+          "date_from": event.startDate instanceof Date ? event.startDate.toISOString() : ``,
+          "date_to": event.endDate instanceof Date ? event.endDate.toISOString() : ``,
+          "is_favorite": event.isFavorite,
+          "base_price": event.price
+        }
+    );
+
+    delete adaptedEvent.destinationInfo;
+    delete adaptedEvent.startDate;
+    delete adaptedEvent.endDate;
+    delete adaptedEvent.isFavorite;
+    delete adaptedEvent.price;
+
+    return adaptedEvent;
   }
 }

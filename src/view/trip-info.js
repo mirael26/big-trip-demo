@@ -8,6 +8,10 @@ export default class TripInfo extends AbstractView {
   }
 
   _createRouteTemplate() {
+    if (!this._events.length) {
+      return ``;
+    }
+
     const events = getEventsInOrder(this._events);
     const destinations = events.map((event) => {
       return event.destination;
@@ -19,7 +23,7 @@ export default class TripInfo extends AbstractView {
     const startDay = events[0].startDate;
     const endDay = events[events.length - 1].endDate.getMonth() === events[0].startDate.getMonth() ? events[events.length - 1].endDate.getDate() : events[events.length - 1].endDate;
 
-    return !events.length ? `` : (
+    return (
       `<div class="trip-info__main">
       <h1 class="trip-info__title">${destinationsUniq.join(` &mdash; `)}</h1>
 

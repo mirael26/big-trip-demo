@@ -1,4 +1,5 @@
 import SortView from "../view/sort.js";
+import LoadingView from "../view/loading.js";
 import EventListView from "../view/event-list.js";
 import EventDayView from "../view/event-day.js";
 import EventDayListView from "../view/event-day-list.js";
@@ -11,17 +12,20 @@ import {SortType, UserAction, UpdateType, FilterType} from "../const.js";
 import {filter} from "../utils/filter.js";
 
 export default class Trip {
-  constructor(boardContainer, eventsModel, filterModel) {
+  constructor(boardContainer, eventsModel, filterModel, api) {
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
     this._boardContainer = boardContainer;
     this._currentSortType = SortType.DEFAULT;
     this._eventPresenter = {};
+    this._isLoading = true;
+    this._api = api;
 
     this._sortComponent = null;
 
     this._eventListComponent = new EventListView();
     this._noEventsComponent = new NoEventsView();
+    this._loadingComponent = new LoadingView();
     this._eventDayComponents = [];
     this._eventDayListComponents = [];
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -71,6 +75,9 @@ export default class Trip {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
         this._eventsModel.updateEvent(updateType, updatedItem);
+        this._api.updateEvent(updatedItem).then((response) => {
+          this._eventsModel.updateEvent(updateType, response);
+        });
         break;
       case UserAction.ADD_EVENT:
         this._eventsModel.addEvent(updateType, updatedItem);
@@ -92,6 +99,11 @@ export default class Trip {
         break;
       case UpdateType.MAJOR:
         this._clearBoard(true);
+        this._renderBoard();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
         this._renderBoard();
         break;
     }
@@ -122,6 +134,10 @@ export default class Trip {
     const eventPresenter = new EventPresenter(eventList, this._handleViewAction, this._handleModeChange);
     eventPresenter.init(event);
     this._eventPresenter[event.id] = eventPresenter;
+  }
+
+  _renderLoading() {
+    render(this._boardContainer, this._loadingComponent, `afterbegin`);
   }
 
   _renderNoEvents() {
@@ -164,6 +180,7 @@ export default class Trip {
 
     remove(this._sortComponent);
     remove(this._noEventsComponent);
+    remove(this._loadingComponent);
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
@@ -171,6 +188,11 @@ export default class Trip {
   }
 
   _renderBoard() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     if (!this._getEvents().size) {
       this._renderNoEvents();
       return;
