@@ -202,6 +202,7 @@ const UserAction = {
 
 const UpdateType = {
   PATCH: `PATCH`,
+  PATCH_ONLY_THIS: `PATCH_ONLY_THIS`,
   MINOR: `MINOR`,
   MAJOR: `MAJOR`
 };
