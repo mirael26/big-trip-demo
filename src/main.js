@@ -20,7 +20,7 @@ const headerPresenter = new HeaderPresenter(siteHeaderElement, eventsModel, filt
 headerPresenter.init();
 
 const boardElement = siteMainElement.querySelector(`.trip-events`);
-const tripPresenter = new TripPresenter(boardElement, eventsModel, filterModel);
+const tripPresenter = new TripPresenter(boardElement, eventsModel, filterModel, api);
 tripPresenter.init();
 
 document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
@@ -35,3 +35,4 @@ api.getEvents()
   .catch(() => {
     eventsModel.setEvents(UpdateType.INIT, []);
   });
+

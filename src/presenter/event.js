@@ -9,10 +9,12 @@ const Mode = {
 };
 
 export default class Event {
-  constructor(eventListContainer, changeData, changeMode) {
+  constructor(eventListContainer, changeData, changeMode, destinations, offers) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._destinationsList = destinations;
+    this._offersList = offers;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -33,7 +35,7 @@ export default class Event {
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(this._event);
-    this._eventEditComponent = new EventEditView(this._event);
+    this._eventEditComponent = new EventEditView(this._event, this._destinationsList, this._offersList);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);

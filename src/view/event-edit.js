@@ -17,10 +17,13 @@ const BLANK_EVENT = {
 };
 
 export default class EventEdit extends SmartView {
-  constructor(eventData = BLANK_EVENT) {
+  constructor(eventData = BLANK_EVENT, destinations, offers) {
     super();
     this._data = EventEdit.parseEventToData(eventData);
     this._datepicker = null;
+    this._destinationsList = destinations;
+    this._offersList = offers;
+
 
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
@@ -64,7 +67,7 @@ export default class EventEdit extends SmartView {
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-    ${OFFERS.find((element) => {
+    ${this._offersList.find((element) => {
     return element.type === currentType;
   }).offers.map((offer) => `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.short}-1" type="checkbox" name="event-offer-${offer.short}" ${checkedOffers.includes(offer) ? `checked` : ``}>
@@ -142,9 +145,9 @@ export default class EventEdit extends SmartView {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${capitalizeFirst(type)} ${getPreposition(type)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1" pattern="${DESTINATIONS.join(`|`)}">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1" pattern="${this._destinationsList.map((destinationItem) => destinationItem.name).join(`|`)}">
           <datalist id="destination-list-1">
-            ${DESTINATIONS.map((city) => `<option value="${city}"></option>`).join(``)}
+            ${this._destinationsList.map((destinationItem) => `<option value="${destinationItem.name}"></option>`).join(``)}
           </datalist>
         </div>
 
@@ -273,7 +276,11 @@ export default class EventEdit extends SmartView {
     evt.preventDefault();
 
     this.updateData({
-      destination: evt.target.value
+      destination: evt.target.value,
+      destinationInfo: {
+        description: this._destinationsList.find((destination) => evt.target.value === destination.name).description,
+        photo: this._destinationsList.find((destination) => evt.target.value === destination.name).pictures
+      }
     });
   }
 
