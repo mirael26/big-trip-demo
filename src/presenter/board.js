@@ -20,8 +20,6 @@ export default class Trip {
     this._eventPresenter = {};
     this._isLoading = true;
     this._api = api;
-    // this._destinationsList = [];
-    // this._offersList = [];
     this._isDestinationLoaded = false;
     this._isOffersLoaded = false;
     this._isEventsLoaded = false;
@@ -47,15 +45,6 @@ export default class Trip {
   init() {
 
     this._renderBoard();
-    // this._api.getDestinations()
-    //   .then((destinations) => {
-    //     this._destinationsList = destinations;
-    //   });
-
-    // this._api.getOffers()
-    //   .then((offers) => {
-    //     this._offersList = offers;
-    //   });
   }
 
   createEvent() {

@@ -28,14 +28,6 @@ document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (e
   tripPresenter.createEvent();
 });
 
-// api.getEvents()
-//   .then((events) => {
-//     eventsModel.setEvents(UpdateType.INIT, events);
-//   })
-//   .catch(() => {
-//     eventsModel.setEvents(UpdateType.INIT, []);
-//   });
-
 api.getDestinations()
   .then((destinations) => {
     eventsModel.setDestinations(UpdateType.INIT_DESTINATIONS, destinations);

@@ -250,7 +250,7 @@ export default class EventEdit extends SmartView {
   _offerToggleHandler(evt) {
     evt.preventDefault();
     const targetOffer = evt.target.nextElementSibling.querySelector(`.event__offer-title`).textContent;
-    const newOffer = OFFERS.find((element) => {
+    const newOffer = this._offersList.find((element) => {
       return element.type === this._data.type;
     }).offers
       .find((element) => {
