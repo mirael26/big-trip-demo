@@ -71,8 +71,8 @@ export default class EventEdit extends SmartView {
 
     <div class="event__available-offers">
     ${offersOfCurrentType.map((offer) => `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offersOfCurrentType.indexOf(offer)}-1" type="checkbox" name="event-offer-${offersOfCurrentType.indexOf(offer)}" ${checkedOffers.includes(offer) ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${offersOfCurrentType.indexOf(offer)}-1">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offersOfCurrentType.indexOf(offer)}" type="checkbox" name="event-offer-${offersOfCurrentType.indexOf(offer)}"${checkedOffers.some((checkedOffer) => checkedOffer.title === offer.title) ? ` checked` : ``}>
+        <label class="event__offer-label" for="event-offer-${offersOfCurrentType.indexOf(offer)}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -207,7 +207,7 @@ export default class EventEdit extends SmartView {
         this.getElement().querySelector(`#event-start-time-1`),
         {
           enableTime: true,
-          time_24hr: true,
+          time24hr: true,
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.startDate,
           minDate: Date.now(),
@@ -219,7 +219,7 @@ export default class EventEdit extends SmartView {
         this.getElement().querySelector(`#event-end-time-1`),
         {
           enableTime: true,
-          time_24hr: true,
+          time24hr: true,
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.endDate,
           minDate: Date.now(),
