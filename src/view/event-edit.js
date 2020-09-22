@@ -63,15 +63,16 @@ export default class EventEdit extends SmartView {
   }
 
   _createOfferTemplate(checkedOffers, currentType) {
+    const offersOfCurrentType = this._offersList.find((element) => {
+      return element.type === currentType;
+    }).offers;
     return `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-    ${this._offersList.find((element) => {
-    return element.type === currentType;
-  }).offers.map((offer) => `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.short}-1" type="checkbox" name="event-offer-${offer.short}" ${checkedOffers.includes(offer) ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${offer.short}-1">
+    ${offersOfCurrentType.map((offer) => `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offersOfCurrentType.indexOf(offer)}-1" type="checkbox" name="event-offer-${offersOfCurrentType.indexOf(offer)}" ${checkedOffers.includes(offer) ? `checked` : ``}>
+        <label class="event__offer-label" for="event-offer-${offersOfCurrentType.indexOf(offer)}-1">
           <span class="event__offer-title">${offer.title}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -135,7 +136,7 @@ export default class EventEdit extends SmartView {
     const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite, isNewEvent);
     const closeButtonTemplate = this._createCloseButtonTemplate(isNewEvent);
 
-    const isSubmitDisabled = this._data.startDate > this._data.endDate || !DESTINATIONS.some((destinationItem) => destinationItem === this._data.destination);
+    const isSubmitDisabled = this._data.startDate > this._data.endDate || !this._destinationsList.some((destinationItem) => destinationItem.name === this._data.destination);
     return (
       `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">

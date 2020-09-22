@@ -20,8 +20,11 @@ export default class Trip {
     this._eventPresenter = {};
     this._isLoading = true;
     this._api = api;
-    this._destinationsList = [];
-    this._offersList = [];
+    // this._destinationsList = [];
+    // this._offersList = [];
+    this._isDestinationLoaded = false;
+    this._isOffersLoaded = false;
+    this._isEventsLoaded = false;
 
     this._sortComponent = null;
 
@@ -44,15 +47,15 @@ export default class Trip {
   init() {
 
     this._renderBoard();
-    this._api.getDestinations()
-      .then((destinations) => {
-        this._destinationsList = destinations;
-      });
+    // this._api.getDestinations()
+    //   .then((destinations) => {
+    //     this._destinationsList = destinations;
+    //   });
 
-    this._api.getOffers()
-      .then((offers) => {
-        this._offersList = offers;
-      });
+    // this._api.getOffers()
+    //   .then((offers) => {
+    //     this._offersList = offers;
+    //   });
   }
 
   createEvent() {
@@ -112,12 +115,31 @@ export default class Trip {
         this._clearBoard(true);
         this._renderBoard();
         break;
+      case UpdateType.INIT_DESTINATIONS:
+        this._isDestinationLoaded = true;
+        if (this._isEventsLoaded && this._isOffersLoaded) {
+          this._loadBoard();
+        }
+        break;
+      case UpdateType.INIT_OFFERS:
+        this._isOffersLoaded = true;
+        if (this._isDestinationLoaded && this._isEventsLoaded) {
+          this._loadBoard();
+        }
+        break;
       case UpdateType.INIT:
-        this._isLoading = false;
-        remove(this._loadingComponent);
-        this._renderBoard();
+        this._isEventsLoaded = true;
+        if (this._isDestinationLoaded && this._isOffersLoaded) {
+          this._loadBoard();
+        }
         break;
     }
+  }
+
+  _loadBoard() {
+    this._isLoading = false;
+    remove(this._loadingComponent);
+    this._renderBoard();
   }
 
   _handleSortTypeChange(sortType) {
@@ -142,7 +164,7 @@ export default class Trip {
   }
 
   _renderEvent(eventList, event) {
-    const eventPresenter = new EventPresenter(eventList, this._handleViewAction, this._handleModeChange, this._destinationsList, this._offersList);
+    const eventPresenter = new EventPresenter(eventList, this._handleViewAction, this._handleModeChange, this._eventsModel.getDestinations(), this._eventsModel.getOffers());
     eventPresenter.init(event);
     this._eventPresenter[event.id] = eventPresenter;
   }
