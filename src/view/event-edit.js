@@ -1,6 +1,6 @@
 import {getPreposition, getCurrentDate, formatFullDate} from "../utils/event.js";
 import {capitalizeFirst} from "../utils/common.js";
-import {EVENT_TYPES, DESTINATIONS, OFFERS} from "../const.js";
+import {EVENT_TYPES} from "../const.js";
 import SmartView from "./smart.js";
 import flatpickr from "flatpickr";
 
@@ -207,10 +207,8 @@ export default class EventEdit extends SmartView {
         this.getElement().querySelector(`#event-start-time-1`),
         {
           enableTime: true,
-          time24hr: true,
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.startDate,
-          minDate: Date.now(),
           onChange: this._startDateChangeHandler
         }
     );
@@ -219,10 +217,8 @@ export default class EventEdit extends SmartView {
         this.getElement().querySelector(`#event-end-time-1`),
         {
           enableTime: true,
-          time24hr: true,
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.endDate,
-          minDate: Date.now(),
           onChange: this._endDateChangeHandler
         }
     );
