@@ -1,13 +1,9 @@
 import EventModel from "./model/event.js";
 
+const SUCCESS_HTTP_STATUS = 200;
 const Method = {
   GET: `GET`,
   PUT: `PUT`
-};
-
-const SuccessHTTPStatusRange = {
-  MIN: 200,
-  MAX: 299
 };
 
 export default class Api {
@@ -61,8 +57,7 @@ export default class Api {
 
   static checkStatus(response) {
     if (
-      response.status < SuccessHTTPStatusRange.MIN &&
-      response.status > SuccessHTTPStatusRange.MAX
+      response.status !== SUCCESS_HTTP_STATUS
     ) {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
