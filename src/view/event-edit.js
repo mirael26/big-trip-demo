@@ -280,7 +280,8 @@ export default class EventEdit extends SmartView {
       destinationInfo: {
         description: this._destinationsList.find((destination) => evt.target.value === destination.name).description,
         photo: this._destinationsList.find((destination) => evt.target.value === destination.name).pictures
-      }
+      },
+      isDestination: evt.target.value ? true : false
     });
   }
 
