@@ -136,7 +136,7 @@ export default class EventEdit extends SmartView {
     const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite, isNewEvent);
     const closeButtonTemplate = this._createCloseButtonTemplate(isNewEvent);
 
-    const isSubmitDisabled = this._data.startDate > this._data.endDate || !this._destinationsList.some((destinationItem) => destinationItem.name === this._data.destination);
+    const isSubmitDisabled = this._data.startDate > this._data.endDate;
     return (
       `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">

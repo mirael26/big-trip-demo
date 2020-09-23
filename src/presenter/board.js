@@ -39,7 +39,7 @@ export default class Trip {
     this._eventsModel.addObserver(this._boardHandleModelChange);
     this._filterModel.addObserver(this._boardHandleModelChange);
 
-    this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction);
+    this._newEventPresenter = null;
   }
 
   init() {
@@ -50,6 +50,7 @@ export default class Trip {
   createEvent() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction, this._eventsModel.getDestinations(), this._eventsModel.getOffers());
     this._newEventPresenter.init();
   }
 
