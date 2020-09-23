@@ -1,5 +1,4 @@
 import EventEditView from "../view/event-edit.js";
-import {generateId} from "../mock/event.js";
 import {remove, render} from "../utils/render.js";
 import {getCurrentDate} from "../utils/event.js";
 import {UserAction, UpdateType} from "../const.js";
@@ -7,18 +6,25 @@ import {UserAction, UpdateType} from "../const.js";
 const NEW_EVENT_BLANK = {
   type: `taxi`,
   destination: ``,
+  destinationInfo: {
+    description: ``,
+    photo: ``
+  },
   startDate: getCurrentDate(),
   endDate: getCurrentDate(),
   price: ``,
   offers: [],
   isFavorite: false,
-  isNewEvent: true,
+  isNewEvent: true
 };
 
 export default class NewEvent {
-  constructor(eventListContainer, changeData) {
+  constructor(eventListContainer, changeData, destinationsList, offersList, addNewEventButton) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
+    this._destinationsList = destinationsList;
+    this._offersList = offersList;
+    this._addNewEventButton = addNewEventButton;
 
     this._eventEditComponent = null;
 
@@ -32,13 +38,14 @@ export default class NewEvent {
       return;
     }
 
-    this._eventEditComponent = new EventEditView(NEW_EVENT_BLANK);
+    this._eventEditComponent = new EventEditView(NEW_EVENT_BLANK, this._destinationsList, this._offersList);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     render(this._eventListContainer, this._eventEditComponent, `afterbegin`);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
+    this._addNewEventButton.disabled = true;
   }
 
   destroy() {
@@ -52,16 +59,35 @@ export default class NewEvent {
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._eventEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._eventEditComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false
+      });
+    };
+
+    this._eventEditComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(updatedEvent) {
     this._changeData(
         UserAction.ADD_EVENT,
         UpdateType.MINOR,
-        Object.assign({id: generateId()}, updatedEvent)
+        updatedEvent
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {
+    this._addNewEventButton.disabled = false;
     this.destroy();
   }
 

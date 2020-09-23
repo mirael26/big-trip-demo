@@ -4,7 +4,7 @@ import EventListView from "../view/event-list.js";
 import EventDayView from "../view/event-day.js";
 import EventDayListView from "../view/event-day-list.js";
 import NoEventsView from "../view/no-events.js";
-import EventPresenter from "./event.js";
+import EventPresenter, {State as EventPresenterViewState} from "./event.js";
 import NewEventPresenter from "./new-event.js";
 import {render, remove} from "../utils/render.js";
 import {sortEventsByDays, sortEventsByTime, sortEventsByPrice} from "../utils/event.js";
@@ -12,7 +12,7 @@ import {SortType, UserAction, UpdateType, FilterType} from "../const.js";
 import {filter} from "../utils/filter.js";
 
 export default class Trip {
-  constructor(boardContainer, eventsModel, filterModel, api) {
+  constructor(boardContainer, eventsModel, filterModel, api, addNewEventButton) {
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
     this._boardContainer = boardContainer;
@@ -23,6 +23,7 @@ export default class Trip {
     this._isDestinationLoaded = false;
     this._isOffersLoaded = false;
     this._isEventsLoaded = false;
+    this._addNewEventButton = addNewEventButton;
 
     this._sortComponent = null;
 
@@ -39,7 +40,7 @@ export default class Trip {
     this._eventsModel.addObserver(this._boardHandleModelChange);
     this._filterModel.addObserver(this._boardHandleModelChange);
 
-    this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction);
+    this._newEventPresenter = null;
   }
 
   init() {
@@ -47,9 +48,10 @@ export default class Trip {
     this._renderBoard();
   }
 
-  createEvent() {
+  _createEvent() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction, this._eventsModel.getDestinations(), this._eventsModel.getOffers(), this._addNewEventButton);
     this._newEventPresenter.init();
   }
 
@@ -77,16 +79,31 @@ export default class Trip {
   _handleViewAction(actionType, updateType, updatedItem) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this._eventsModel.updateEvent(updateType, updatedItem);
+        this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.SAVING);
         this._api.updateEvent(updatedItem).then((response) => {
           this._eventsModel.updateEvent(updateType, response);
+        })
+        .catch(() => {
+          this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.ABORTING);
         });
         break;
       case UserAction.ADD_EVENT:
-        this._eventsModel.addEvent(updateType, updatedItem);
+        this._newEventPresenter.setSaving();
+        this._api.addEvent(updatedItem).then((response) => {
+          this._eventsModel.addEvent(updateType, response);
+        })
+        .catch(() => {
+          this._newEventPresenter.setAborting();
+        });
         break;
       case UserAction.DELETE_EVENT:
-        this._eventsModel.deleteEvent(updateType, updatedItem);
+        this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.DELETING);
+        this._api.deleteEvent(updatedItem).then(() => {
+          this._eventsModel.deleteEvent(updateType, updatedItem);
+        })
+        .catch(() => {
+          this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.ABORTING);
+        });
         break;
     }
   }
@@ -99,6 +116,7 @@ export default class Trip {
       case UpdateType.MINOR:
         this._clearBoard();
         this._renderBoard();
+        this._addNewEventButton.disabled = false;
         break;
       case UpdateType.MAJOR:
         this._clearBoard(true);
@@ -203,6 +221,9 @@ export default class Trip {
     remove(this._sortComponent);
     remove(this._noEventsComponent);
     remove(this._loadingComponent);
+    if (this._newEventPresenter !== null) {
+      this._newEventPresenter.destroy();
+    }
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
@@ -222,5 +243,9 @@ export default class Trip {
 
     this._renderSort();
     this._renderEventList(this._getEvents());
+    this._addNewEventButton.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      this._createEvent();
+    });
   }
 }
