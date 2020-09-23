@@ -190,8 +190,11 @@ export default class EventEdit extends SmartView {
     this._setInnerHandlers();
     this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
-    this.setCloseButtonClickHandler(this._callback.closeButtonClick);
     this.setDeleteClickHandler(this._callback.deleteClick);
+    if (this._data.isNewEvent) {
+      return;
+    }
+    this.setCloseButtonClickHandler(this._callback.closeButtonClick);
     this.setFavoriteClickHandler(this._callback.favoriteClick);
   }
 
