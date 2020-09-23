@@ -78,7 +78,7 @@ export default class Trip {
   _handleViewAction(actionType, updateType, updatedItem) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        this._eventsModel.updateEvent(updateType, updatedItem);
+        // this._eventsModel.updateEvent(updateType, updatedItem);
         this._api.updateEvent(updatedItem).then((response) => {
           this._eventsModel.updateEvent(updateType, response);
         });

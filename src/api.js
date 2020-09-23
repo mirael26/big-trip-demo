@@ -28,7 +28,7 @@ export default class Api {
     .then(Api.toJSON);
   }
 
-  updateEvents(event) {
+  updateEvent(event) {
     return this._load({
       url: `points/${event.id}`,
       method: Method.PUT,
