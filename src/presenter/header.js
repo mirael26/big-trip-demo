@@ -11,6 +11,8 @@ export default class Header {
     this._filterModel = filterModel;
     this._headerContainer = headerContainer;
 
+    this._isLoading = true;
+
     this._tripInfoComponent = null;
     this._tripControlsComponent = new TripControlsView();
     this._siteMenuComponent = new SiteMenuView();
@@ -43,6 +45,10 @@ export default class Header {
       case UpdateType.MAJOR:
         this._clearFilter();
         this._renderFilter();
+        break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        this._renderHeader();
         break;
     }
   }
@@ -92,9 +98,11 @@ export default class Header {
   }
 
   _renderHeader() {
+    if (this._isLoading) {
+      return;
+    }
+
     this._renderTripControls();
     this._renderTripInfo();
   }
-
-
 }

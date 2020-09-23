@@ -1,6 +1,6 @@
 import {getPreposition, getCurrentDate, formatFullDate} from "../utils/event.js";
 import {capitalizeFirst} from "../utils/common.js";
-import {EVENT_TYPES, DESTINATIONS, OFFERS} from "../const.js";
+import {EVENT_TYPES} from "../const.js";
 import SmartView from "./smart.js";
 import flatpickr from "flatpickr";
 
@@ -17,10 +17,13 @@ const BLANK_EVENT = {
 };
 
 export default class EventEdit extends SmartView {
-  constructor(eventData = BLANK_EVENT) {
+  constructor(eventData = BLANK_EVENT, destinations, offers) {
     super();
     this._data = EventEdit.parseEventToData(eventData);
     this._datepicker = null;
+    this._destinationsList = destinations;
+    this._offersList = offers;
+
 
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._destinationChangeHandler = this._destinationChangeHandler.bind(this);
@@ -60,15 +63,16 @@ export default class EventEdit extends SmartView {
   }
 
   _createOfferTemplate(checkedOffers, currentType) {
+    const offersOfCurrentType = this._offersList.find((element) => {
+      return element.type === currentType;
+    }).offers;
     return `<section class="event__section  event__section--offers">
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-    ${OFFERS.find((element) => {
-    return element.type === currentType;
-  }).offers.map((offer) => `<div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.short}-1" type="checkbox" name="event-offer-${offer.short}" ${checkedOffers.includes(offer) ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-${offer.short}-1">
+    ${offersOfCurrentType.map((offer) => `<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offersOfCurrentType.indexOf(offer)}" type="checkbox" name="event-offer-${offersOfCurrentType.indexOf(offer)}"${checkedOffers.some((checkedOffer) => checkedOffer.title === offer.title) ? ` checked` : ``}>
+        <label class="event__offer-label" for="event-offer-${offersOfCurrentType.indexOf(offer)}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;
           &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
@@ -84,7 +88,7 @@ export default class EventEdit extends SmartView {
 
     <div class="event__photos-container">
       <div class="event__photos-tape">
-        ${destinationInfo.photo.map((photo) => `<img class="event__photo" src="${photo}" alt="Event photo">`).join(``)}
+        ${destinationInfo.photo.map((photo) => `<img class="event__photo" src="${photo.src}" alt="Event photo">`).join(``)}
       </div>
     </div>
   </section>`;
@@ -132,7 +136,7 @@ export default class EventEdit extends SmartView {
     const favoriteButtonTemplate = this._createFavoriteButtonTemplate(isFavorite, isNewEvent);
     const closeButtonTemplate = this._createCloseButtonTemplate(isNewEvent);
 
-    const isSubmitDisabled = this._data.startDate > this._data.endDate || !DESTINATIONS.some((destinationItem) => destinationItem === this._data.destination);
+    const isSubmitDisabled = this._data.startDate > this._data.endDate || !this._destinationsList.some((destinationItem) => destinationItem.name === this._data.destination);
     return (
       `<form class="trip-events__item  event  event--edit" action="#" method="post">
       <header class="event__header">
@@ -142,9 +146,9 @@ export default class EventEdit extends SmartView {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${capitalizeFirst(type)} ${getPreposition(type)}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1" pattern="${DESTINATIONS.join(`|`)}">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination}" list="destination-list-1" pattern="${this._destinationsList.map((destinationItem) => destinationItem.name).join(`|`)}">
           <datalist id="destination-list-1">
-            ${DESTINATIONS.map((city) => `<option value="${city}"></option>`).join(``)}
+            ${this._destinationsList.map((destinationItem) => `<option value="${destinationItem.name}"></option>`).join(``)}
           </datalist>
         </div>
 
@@ -205,7 +209,6 @@ export default class EventEdit extends SmartView {
           enableTime: true,
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.startDate,
-          minDate: Date.now(),
           onChange: this._startDateChangeHandler
         }
     );
@@ -216,7 +219,6 @@ export default class EventEdit extends SmartView {
           enableTime: true,
           dateFormat: `d/m/y H:i`,
           defaultDate: this._data.endDate,
-          minDate: Date.now(),
           onChange: this._endDateChangeHandler
         }
     );
@@ -240,14 +242,15 @@ export default class EventEdit extends SmartView {
   _typeToggleHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      type: evt.target.value
+      type: evt.target.value,
+      offers: []
     });
   }
 
   _offerToggleHandler(evt) {
     evt.preventDefault();
     const targetOffer = evt.target.nextElementSibling.querySelector(`.event__offer-title`).textContent;
-    const newOffer = OFFERS.find((element) => {
+    const newOffer = this._offersList.find((element) => {
       return element.type === this._data.type;
     }).offers
       .find((element) => {
@@ -270,7 +273,11 @@ export default class EventEdit extends SmartView {
     evt.preventDefault();
 
     this.updateData({
-      destination: evt.target.value
+      destination: evt.target.value,
+      destinationInfo: {
+        description: this._destinationsList.find((destination) => evt.target.value === destination.name).description,
+        photo: this._destinationsList.find((destination) => evt.target.value === destination.name).pictures
+      }
     });
   }
 
