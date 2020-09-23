@@ -1,5 +1,4 @@
 import EventEditView from "../view/event-edit.js";
-import {generateId} from "../mock/event.js";
 import {remove, render} from "../utils/render.js";
 import {getCurrentDate} from "../utils/event.js";
 import {UserAction, UpdateType} from "../const.js";
@@ -7,12 +6,16 @@ import {UserAction, UpdateType} from "../const.js";
 const NEW_EVENT_BLANK = {
   type: `taxi`,
   destination: ``,
+  destinationInfo: {
+    description: ``,
+    photo: ``
+  },
   startDate: getCurrentDate(),
   endDate: getCurrentDate(),
   price: ``,
   offers: [],
   isFavorite: false,
-  isNewEvent: true,
+  isNewEvent: true
 };
 
 export default class NewEvent {
@@ -54,13 +57,19 @@ export default class NewEvent {
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._eventEditComponent.updateData({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
   _handleFormSubmit(updatedEvent) {
     this._changeData(
         UserAction.ADD_EVENT,
         UpdateType.MINOR,
-        Object.assign({id: generateId()}, updatedEvent)
+        updatedEvent
     );
-    this.destroy();
   }
 
   _handleDeleteClick() {

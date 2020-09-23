@@ -8,6 +8,11 @@ const Mode = {
   EDITING: `EDITING`
 };
 
+export const State = {
+  SAVING: `SAVING`,
+  DELETING: `DELETING`
+};
+
 export default class Event {
   constructor(eventListContainer, changeData, changeMode, destinations, offers) {
     this._eventListContainer = eventListContainer;
@@ -53,7 +58,8 @@ export default class Event {
     }
 
     if (this._mode === Mode.EDITING) {
-      replace(this._eventEditComponent, prevEventEditComponent);
+      replace(this._eventComponent, prevEventEditComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevEventComponent);
@@ -68,6 +74,23 @@ export default class Event {
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceFormToEvent();
+    }
+  }
+
+  setViewState(state) {
+    switch (state) {
+      case State.SAVING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isSaving: true
+        });
+        break;
+      case State.DELETING:
+        this._eventEditComponent.updateData({
+          isDisabled: true,
+          isDeleting: true
+        });
+        break;
     }
   }
 
@@ -125,7 +148,6 @@ export default class Event {
         isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
         updatedEvent
     );
-    this._replaceFormToEvent();
   }
 
   _handleDeleteClick(deletedEvent) {

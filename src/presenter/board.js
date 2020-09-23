@@ -4,7 +4,7 @@ import EventListView from "../view/event-list.js";
 import EventDayView from "../view/event-day.js";
 import EventDayListView from "../view/event-day-list.js";
 import NoEventsView from "../view/no-events.js";
-import EventPresenter from "./event.js";
+import EventPresenter, {State as EventPresenterViewState} from "./event.js";
 import NewEventPresenter from "./new-event.js";
 import {render, remove} from "../utils/render.js";
 import {sortEventsByDays, sortEventsByTime, sortEventsByPrice} from "../utils/event.js";
@@ -50,9 +50,6 @@ export default class Trip {
   createEvent() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    if (this._newEventPresenter !== null) {
-      this._newEventPresenter.destroy();
-    }
     this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction, this._eventsModel.getDestinations(), this._eventsModel.getOffers());
     this._newEventPresenter.init();
   }
@@ -81,15 +78,22 @@ export default class Trip {
   _handleViewAction(actionType, updateType, updatedItem) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
+        this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.SAVING);
         this._api.updateEvent(updatedItem).then((response) => {
           this._eventsModel.updateEvent(updateType, response);
         });
         break;
       case UserAction.ADD_EVENT:
-        this._eventsModel.addEvent(updateType, updatedItem);
+        this._newEventPresenter.setSaving();
+        this._api.addEvent(updatedItem).then((response) => {
+          this._eventsModel.addEvent(updateType, response);
+        });
         break;
       case UserAction.DELETE_EVENT:
-        this._eventsModel.deleteEvent(updateType, updatedItem);
+        this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.DELETING);
+        this._api.deleteEvent(updatedItem).then(() => {
+          this._eventsModel.deleteEvent(updateType, updatedItem);
+        });
         break;
     }
   }
@@ -206,6 +210,9 @@ export default class Trip {
     remove(this._sortComponent);
     remove(this._noEventsComponent);
     remove(this._loadingComponent);
+    if (this._newEventPresenter !== null) {
+      this._newEventPresenter.destroy();
+    }
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
