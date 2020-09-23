@@ -50,6 +50,9 @@ export default class Trip {
   createEvent() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    if (this._newEventPresenter !== null) {
+      this._newEventPresenter.destroy();
+    }
     this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction, this._eventsModel.getDestinations(), this._eventsModel.getOffers());
     this._newEventPresenter.init();
   }
@@ -78,7 +81,6 @@ export default class Trip {
   _handleViewAction(actionType, updateType, updatedItem) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
-        // this._eventsModel.updateEvent(updateType, updatedItem);
         this._api.updateEvent(updatedItem).then((response) => {
           this._eventsModel.updateEvent(updateType, response);
         });
