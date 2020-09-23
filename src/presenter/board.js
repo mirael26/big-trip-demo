@@ -81,18 +81,27 @@ export default class Trip {
         this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.SAVING);
         this._api.updateEvent(updatedItem).then((response) => {
           this._eventsModel.updateEvent(updateType, response);
+        })
+        .catch(() => {
+          this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.ABORTING);
         });
         break;
       case UserAction.ADD_EVENT:
         this._newEventPresenter.setSaving();
         this._api.addEvent(updatedItem).then((response) => {
           this._eventsModel.addEvent(updateType, response);
+        })
+        .catch(() => {
+          this._newEventPresenter.setAborting();
         });
         break;
       case UserAction.DELETE_EVENT:
         this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.DELETING);
         this._api.deleteEvent(updatedItem).then(() => {
           this._eventsModel.deleteEvent(updateType, updatedItem);
+        })
+        .catch(() => {
+          this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.ABORTING);
         });
         break;
     }
