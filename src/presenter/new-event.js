@@ -16,9 +16,11 @@ const NEW_EVENT_BLANK = {
 };
 
 export default class NewEvent {
-  constructor(eventListContainer, changeData) {
+  constructor(eventListContainer, changeData, destinationsList, offersList) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
+    this._destinationsList = destinationsList;
+    this._offersList = offersList;
 
     this._eventEditComponent = null;
 
@@ -32,7 +34,7 @@ export default class NewEvent {
       return;
     }
 
-    this._eventEditComponent = new EventEditView(NEW_EVENT_BLANK);
+    this._eventEditComponent = new EventEditView(NEW_EVENT_BLANK, this._destinationsList, this._offersList);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
