@@ -121,6 +121,7 @@ export default class Trip {
       case UpdateType.MAJOR:
         this._clearBoard(true);
         this._renderBoard();
+        this._addNewEventButton.disabled = false;
         break;
       case UpdateType.INIT_DESTINATIONS:
         this._isDestinationLoaded = true;
