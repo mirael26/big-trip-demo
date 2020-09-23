@@ -12,7 +12,7 @@ import {SortType, UserAction, UpdateType, FilterType} from "../const.js";
 import {filter} from "../utils/filter.js";
 
 export default class Trip {
-  constructor(boardContainer, eventsModel, filterModel, api) {
+  constructor(boardContainer, eventsModel, filterModel, api, addNewEventButton) {
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
     this._boardContainer = boardContainer;
@@ -23,6 +23,7 @@ export default class Trip {
     this._isDestinationLoaded = false;
     this._isOffersLoaded = false;
     this._isEventsLoaded = false;
+    this._addNewEventButton = addNewEventButton;
 
     this._sortComponent = null;
 
@@ -47,10 +48,10 @@ export default class Trip {
     this._renderBoard();
   }
 
-  createEvent() {
+  _createEvent() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction, this._eventsModel.getDestinations(), this._eventsModel.getOffers());
+    this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction, this._eventsModel.getDestinations(), this._eventsModel.getOffers(), this._addNewEventButton);
     this._newEventPresenter.init();
   }
 
@@ -115,6 +116,7 @@ export default class Trip {
       case UpdateType.MINOR:
         this._clearBoard();
         this._renderBoard();
+        this._addNewEventButton.disabled = false;
         break;
       case UpdateType.MAJOR:
         this._clearBoard(true);
@@ -241,5 +243,9 @@ export default class Trip {
 
     this._renderSort();
     this._renderEventList(this._getEvents());
+    this._addNewEventButton.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+      this._createEvent();
+    });
   }
 }

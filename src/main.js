@@ -10,6 +10,7 @@ const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const siteHeaderElement = document.querySelector(`.trip-main`);
 const siteMainElement = document.querySelector(`.page-body__page-main`);
+const addNewEventButton = siteHeaderElement.querySelector(`.trip-main__event-add-btn`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
 
@@ -20,13 +21,8 @@ const headerPresenter = new HeaderPresenter(siteHeaderElement, eventsModel, filt
 headerPresenter.init();
 
 const boardElement = siteMainElement.querySelector(`.trip-events`);
-const tripPresenter = new TripPresenter(boardElement, eventsModel, filterModel, api);
+const tripPresenter = new TripPresenter(boardElement, eventsModel, filterModel, api, addNewEventButton);
 tripPresenter.init();
-
-document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
-  evt.preventDefault();
-  tripPresenter.createEvent();
-});
 
 api.getDestinations()
   .then((destinations) => {
