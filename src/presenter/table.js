@@ -11,11 +11,11 @@ import {sortEventsByDays, sortEventsByTime, sortEventsByPrice} from "../utils/ev
 import {SortType, UserAction, UpdateType, FilterType} from "../const.js";
 import {filter} from "../utils/filter.js";
 
-export default class Trip {
-  constructor(boardContainer, eventsModel, filterModel, api, addNewEventButton) {
+export default class Table {
+  constructor(tableContainer, eventsModel, filterModel, api, addNewEventButton) {
     this._eventsModel = eventsModel;
     this._filterModel = filterModel;
-    this._boardContainer = boardContainer;
+    this._tableContainer = tableContainer;
     this._currentSortType = SortType.DEFAULT;
     this._eventPresenter = {};
     this._isLoading = true;
@@ -34,7 +34,7 @@ export default class Trip {
     this._eventDayListComponents = [];
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
-    this._boardHandleModelChange = this._boardHandleModelChange.bind(this);
+    this._tableHandleModelChange = this._tableHandleModelChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
 
@@ -43,19 +43,19 @@ export default class Trip {
 
   init() {
 
-    this._boardContainer.style = `display: block`;
-    this._renderBoard();
-    this._eventsModel.addObserver(this._boardHandleModelChange);
-    this._filterModel.addObserver(this._boardHandleModelChange);
+    this._tableContainer.style = `display: block`;
+    this._renderTable();
+    this._eventsModel.addObserver(this._tableHandleModelChange);
+    this._filterModel.addObserver(this._tableHandleModelChange);
   }
 
   destroy() {
-    this._clearBoard();
+    this._clearTable();
     remove(this._eventListComponent);
-    this._boardContainer.style = `display: none`;
+    this._tableContainer.style = `display: none`;
 
-    this._eventsModel.removeObserver(this._boardHandleModelChange);
-    this._filterModel.removeObserver(this._boardHandleModelChange);
+    this._eventsModel.removeObserver(this._tableHandleModelChange);
+    this._filterModel.removeObserver(this._tableHandleModelChange);
   }
 
   createEvent() {
@@ -118,46 +118,46 @@ export default class Trip {
     }
   }
 
-  _boardHandleModelChange(updateType, data) {
+  _tableHandleModelChange(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
         this._eventPresenter[data.id].init(data);
         break;
       case UpdateType.MINOR:
-        this._clearBoard();
-        this._renderBoard();
+        this._clearTable();
+        this._renderTable();
         this._addNewEventButton.disabled = false;
         break;
       case UpdateType.MAJOR:
-        this._clearBoard(true);
-        this._renderBoard();
+        this._clearTable(true);
+        this._renderTable();
         this._addNewEventButton.disabled = false;
         break;
       case UpdateType.INIT_DESTINATIONS:
         this._isDestinationLoaded = true;
         if (this._isEventsLoaded && this._isOffersLoaded) {
-          this._loadBoard();
+          this._loadTable();
         }
         break;
       case UpdateType.INIT_OFFERS:
         this._isOffersLoaded = true;
         if (this._isDestinationLoaded && this._isEventsLoaded) {
-          this._loadBoard();
+          this._loadTable();
         }
         break;
       case UpdateType.INIT:
         this._isEventsLoaded = true;
         if (this._isDestinationLoaded && this._isOffersLoaded) {
-          this._loadBoard();
+          this._loadTable();
         }
         break;
     }
   }
 
-  _loadBoard() {
+  _loadTable() {
     this._isLoading = false;
     remove(this._loadingComponent);
-    this._renderBoard();
+    this._renderTable();
   }
 
   _handleSortTypeChange(sortType) {
@@ -178,7 +178,7 @@ export default class Trip {
     this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
 
-    render(this._boardContainer, this._sortComponent, `afterbegin`);
+    render(this._tableContainer, this._sortComponent, `afterbegin`);
   }
 
   _renderEvent(eventList, event) {
@@ -188,15 +188,15 @@ export default class Trip {
   }
 
   _renderLoading() {
-    render(this._boardContainer, this._loadingComponent, `afterbegin`);
+    render(this._tableContainer, this._loadingComponent, `afterbegin`);
   }
 
   _renderNoEvents() {
-    render(this._boardContainer, this._noEventsComponent, `afterbegin`);
+    render(this._tableContainer, this._noEventsComponent, `afterbegin`);
   }
 
   _renderEventList(events) {
-    render(this._boardContainer, this._eventListComponent, `beforeend`);
+    render(this._tableContainer, this._eventListComponent, `beforeend`);
 
     let mapIndex = 0;
     events.forEach((value, key) => {
@@ -226,7 +226,7 @@ export default class Trip {
     this._eventDayListComponents = [];
   }
 
-  _clearBoard(resetSortType = false) {
+  _clearTable(resetSortType = false) {
     this._clearEventList();
 
     remove(this._sortComponent);
@@ -241,7 +241,7 @@ export default class Trip {
     }
   }
 
-  _renderBoard() {
+  _renderTable() {
     if (this._isLoading) {
       this._renderLoading();
       return;
