@@ -1,5 +1,5 @@
 import HeaderPresenter from "./presenter/header.js";
-import TripPresenter from "./presenter/board.js";
+import TablePresenter from "./presenter/table.js";
 import EventModel from "./model/event.js";
 import FilterModel from "./model/filter.js";
 import SiteMenuView from "./view/site-menu.js";
@@ -26,18 +26,18 @@ const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.ADD_NEW_EVENT:
       remove(statisticsComponent);
-      tripPresenter.destroy();
-      tripPresenter.init();
-      tripPresenter.createEvent();
+      tablePresenter.destroy();
+      tablePresenter.init();
+      tablePresenter.createEvent();
       siteMenuComponent.setMenuItem(MenuItem.TABLE);
       break;
     case MenuItem.TABLE:
-      tripPresenter.init();
+      tablePresenter.init();
       remove(statisticsComponent);
       siteMenuComponent.setMenuItem(MenuItem.TABLE);
       break;
     case MenuItem.STATISTICS:
-      tripPresenter.destroy();
+      tablePresenter.destroy();
       statisticsComponent = new StaticsticsView(eventsModel.getEvents());
       render(siteMainElement, statisticsComponent, `beforeend`);
       siteMenuComponent.setMenuItem(MenuItem.STATISTICS);
@@ -57,9 +57,9 @@ render(siteHeaderElement, addNewEventButtonComponent, `beforeend`);
 addNewEventButtonComponent.setMenuClickHandler(handleSiteMenuClick);
 
 
-const boardElement = siteMainElement.querySelector(`.trip-events`);
-const tripPresenter = new TripPresenter(boardElement, eventsModel, filterModel, api, addNewEventButtonComponent.getElement());
-tripPresenter.init();
+const tableElement = siteMainElement.querySelector(`.trip-events`);
+const tablePresenter = new TablePresenter(tableElement, eventsModel, filterModel, api, addNewEventButtonComponent.getElement());
+tablePresenter.init();
 
 api.getDestinations()
   .then((destinations) => {

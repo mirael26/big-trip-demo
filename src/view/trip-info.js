@@ -1,6 +1,8 @@
 import AbstractView from "./abstract.js";
 import {getShortDate, getEventsInOrder} from "../utils/event.js";
 
+const MAX_DESTINATIONS_SHOW = 3;
+
 export default class TripInfo extends AbstractView {
   constructor(eventsData) {
     super();
@@ -23,13 +25,13 @@ export default class TripInfo extends AbstractView {
     const startDay = events[0].startDate;
     const endDay = events[events.length - 1].endDate.getMonth() === events[0].startDate.getMonth() ? events[events.length - 1].endDate.getDate() : events[events.length - 1].endDate;
 
-    return (
-      `<div class="trip-info__main">
-      <h1 class="trip-info__title">${destinationsUniq.join(` &mdash; `)}</h1>
+    return `<div class="trip-info__main">
+      ${destinationsUniq.length > MAX_DESTINATIONS_SHOW
+    ? `<h1 class="trip-info__title">${destinationsUniq[0]} — ... — ${destinationsUniq[destinationsUniq.length - 1]}</h1>`
+    : `<h1 class="trip-info__title">${destinationsUniq.join(` &mdash; `)}</h1>`}
 
       <p class="trip-info__dates">${getShortDate(startDay)}&nbsp;&mdash;&nbsp;${getShortDate(endDay)}</p>
-      </div>`
-    );
+      </div>`;
   }
 
   _createCostTemplate() {
