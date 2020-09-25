@@ -37,18 +37,28 @@ export default class Trip {
     this._boardHandleModelChange = this._boardHandleModelChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._eventsModel.addObserver(this._boardHandleModelChange);
-    this._filterModel.addObserver(this._boardHandleModelChange);
 
     this._newEventPresenter = null;
   }
 
   init() {
 
+    this._boardContainer.style = `display: block`;
     this._renderBoard();
+    this._eventsModel.addObserver(this._boardHandleModelChange);
+    this._filterModel.addObserver(this._boardHandleModelChange);
   }
 
-  _createEvent() {
+  destroy() {
+    this._clearBoard();
+    remove(this._eventListComponent);
+    this._boardContainer.style = `display: none`;
+
+    this._eventsModel.removeObserver(this._boardHandleModelChange);
+    this._filterModel.removeObserver(this._boardHandleModelChange);
+  }
+
+  createEvent() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction, this._eventsModel.getDestinations(), this._eventsModel.getOffers(), this._addNewEventButton);
@@ -121,6 +131,7 @@ export default class Trip {
       case UpdateType.MAJOR:
         this._clearBoard(true);
         this._renderBoard();
+        this._addNewEventButton.disabled = false;
         break;
       case UpdateType.INIT_DESTINATIONS:
         this._isDestinationLoaded = true;
@@ -243,9 +254,5 @@ export default class Trip {
 
     this._renderSort();
     this._renderEventList(this._getEvents());
-    this._addNewEventButton.addEventListener(`click`, (evt) => {
-      evt.preventDefault();
-      this._createEvent();
-    });
   }
 }
