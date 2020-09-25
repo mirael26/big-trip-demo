@@ -1,11 +1,9 @@
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import SmartView from "./smart.js";
-import {countMoneyByTypes, countTransportTrip, countEventsPoints, countEventsTime} from "../utils/statistics.js";
+import {countMoneyByTypes, countTransportTrip, countTimeSpend} from "../utils/statistics.js";
 
 const BAR_HEIGHT = 30;
-const TYPES_COUNT = 10;
-const TRANSPORT_COUNT = 7;
 
 export default class Statistics extends SmartView {
   constructor(events) {
@@ -16,18 +14,20 @@ export default class Statistics extends SmartView {
     this._transportChart = null;
     this._timeSpendChart = null;
 
+    this._moneyStatistics = countMoneyByTypes(this._data);
+    this._transportTripCountStatistics = countTransportTrip(this._data);
+
     this._setCharts();
   }
 
-  _renderMoneyChart(moneyCtx, events) {
-    const moneyStatistics = countMoneyByTypes(events);
+  _renderMoneyChart(moneyCtx) {
     return new Chart(moneyCtx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-        labels: [`🚕 RIDE`, `🚌 TRAVEL`, `🚂 RUSH`, `🛳️ SAIL`, `🚆 GO`, `🚗 DRIVE`, `✈️ FLY`, `🏨 STAY`, `🏛️ LOOK`, `🍴 EAT`],
+        labels: this._moneyStatistics.types,
         datasets: [{
-          data: moneyStatistics,
+          data: this._moneyStatistics.price,
           backgroundColor: `#ffffff`,
           hoverBackgroundColor: `#ffffff`,
           anchor: `start`
@@ -87,15 +87,14 @@ export default class Statistics extends SmartView {
     });
   }
 
-  _renderTransportChart(transportCtx, events) {
-    const transportTripStatistics = countTransportTrip(events);
+  _renderTransportChart(transportCtx) {
     return new Chart(transportCtx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-        labels: [`🚕 RIDE`, `🚌 TRAVEL`, `🚂 RUSH`, `🛳️ SAIL`, `🚆 GO`, `🚗 DRIVE`, `✈️ FLY`],
+        labels: this._transportTripCountStatistics.types,
         datasets: [{
-          data: transportTripStatistics,
+          data: this._transportTripCountStatistics.tripCounts,
           backgroundColor: `#ffffff`,
           hoverBackgroundColor: `#ffffff`,
           anchor: `start`
@@ -156,16 +155,15 @@ export default class Statistics extends SmartView {
   }
 
   _renderTimeSpendChart(timeSpendCtx, events) {
-    const eventsPointsStatistics = countEventsPoints(events);
-    const eventsTimeStatistics = countEventsTime(events);
+    const eventsTimeSpendStatistics = countTimeSpend(events);
 
     return new Chart(timeSpendCtx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-        labels: eventsPointsStatistics,
+        labels: eventsTimeSpendStatistics.points,
         datasets: [{
-          data: eventsTimeStatistics,
+          data: eventsTimeSpendStatistics.time,
           backgroundColor: `#ffffff`,
           hoverBackgroundColor: `#ffffff`,
           anchor: `start`
@@ -180,7 +178,7 @@ export default class Statistics extends SmartView {
             color: `#000000`,
             anchor: `end`,
             align: `start`,
-            formatter: (val) => `${val}x`
+            formatter: (val) => val < 1 ? `<1H` : `${val}H`
           }
         },
         title: {
@@ -224,7 +222,6 @@ export default class Statistics extends SmartView {
       }
     });
   }
-
 
   removeElement() {
     super.removeElement();
@@ -275,12 +272,12 @@ export default class Statistics extends SmartView {
     const transportCtx = this.getElement().querySelector(`.statistics__chart--transport`);
     const timeSpendCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
-    moneyCtx.height = BAR_HEIGHT * TYPES_COUNT;
-    transportCtx.height = BAR_HEIGHT * TRANSPORT_COUNT;
+    moneyCtx.height = BAR_HEIGHT * this._moneyStatistics.price.length;
+    transportCtx.height = BAR_HEIGHT * this._transportTripCountStatistics.tripCounts.length;
     timeSpendCtx.height = BAR_HEIGHT * this._data.length;
 
-    this._moneyChart = this._renderMoneyChart(moneyCtx, this._data);
-    this._transportChart = this._renderTransportChart(transportCtx, this._data);
+    this._moneyChart = this._renderMoneyChart(moneyCtx);
+    this._transportChart = this._renderTransportChart(transportCtx);
     this._timeSpendChart = this._renderTimeSpendChart(timeSpendCtx, this._data);
   }
 }
