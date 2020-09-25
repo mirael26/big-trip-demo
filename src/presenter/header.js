@@ -80,7 +80,7 @@ export default class Header {
 
   _renderFilter() {
     if (this._filterComponent !== null) {
-      this._filterComponent = null;
+      remove(this._filterComponent);
     }
     this._filterComponent = new FilterView(this._filterModel.getFilter());
     render(this._tripControlsComponent, this._filterComponent, `beforeend`);
@@ -93,16 +93,15 @@ export default class Header {
 
   _renderTripControls() {
     render(this._headerContainer, this._tripControlsComponent, `afterbegin`);
-    this._renderSiteMenu();
     this._renderFilter();
   }
 
   _renderHeader() {
+    this._renderTripControls();
+
     if (this._isLoading) {
       return;
     }
-
-    this._renderTripControls();
     this._renderTripInfo();
   }
 }

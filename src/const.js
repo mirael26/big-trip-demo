@@ -216,4 +216,10 @@ const FilterType = {
   PAST: `past`
 };
 
-export {EVENT_TYPES, DESTINATIONS, EVENT_DESCRIPTIONS, OFFERS, SortType, UserAction, UpdateType, FilterType};
+const MenuItem = {
+  ADD_NEW_EVENT: `ADD_NEW_EVENT`,
+  TABLE: `TABLE`,
+  STATISTICS: `STATISTICS`
+};
+
+export {EVENT_TYPES, DESTINATIONS, EVENT_DESCRIPTIONS, OFFERS, SortType, UserAction, UpdateType, FilterType, MenuItem};
