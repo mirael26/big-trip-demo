@@ -1,4 +1,4 @@
-import EventModel from "./model/event.js";
+import EventModel from "../model/event.js";
 
 const SUCCESS_HTTP_STATUS = 200;
 const Method = {
@@ -57,6 +57,16 @@ export default class Api {
       url: `points/${event.id}`,
       method: Method.DELETE
     });
+  }
+
+  sync(events) {
+    return this._load({
+      url: `/points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(events),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON);
   }
 
   _load({
