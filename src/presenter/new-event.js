@@ -19,8 +19,8 @@ const NEW_EVENT_BLANK = {
 };
 
 export default class NewEvent {
-  constructor(eventListContainer, changeData, destinationsList, offersList, addNewEventButton) {
-    this._eventListContainer = eventListContainer;
+  constructor(tableContainer, changeData, destinationsList, offersList, addNewEventButton) {
+    this._tableContainer = tableContainer;
     this._changeData = changeData;
     this._destinationsList = destinationsList;
     this._offersList = offersList;
@@ -42,7 +42,7 @@ export default class NewEvent {
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
-    render(this._eventListContainer, this._eventEditComponent, RenderPosition.AFTERBEGIN);
+    render(this._tableContainer, this._eventEditComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._addNewEventButton.disabled = true;
