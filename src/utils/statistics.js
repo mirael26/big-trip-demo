@@ -32,14 +32,14 @@ const countMoneyByTypes = (events) => {
   const allEventTypes = EVENT_TYPES.transfer.concat(EVENT_TYPES.activity);
 
   const eventsWithPrice = allEventTypes.map((type) => {
-    const newObject = [];
-    newObject.type = iconsWithLabel.get(type);
-    newObject.price = events
+    const transformedEvents = [];
+    transformedEvents.type = iconsWithLabel.get(type);
+    transformedEvents.price = events
       .filter((event) => {
         return event.type === type;
       })
       .reduce((accumulator, event) => accumulator + event.price, 0);
-    return newObject;
+    return transformedEvents;
   })
     .filter((element) => element.price !== 0);
   const moneyStatistics = [];
@@ -51,13 +51,13 @@ const countMoneyByTypes = (events) => {
 
 const countTransportTrip = (events) => {
   const transportWithTripCount = EVENT_TYPES.transfer.map((type) => {
-    const newObject = [];
-    newObject.type = iconsWithLabel.get(type);
-    newObject.tripCount = events
+    const transports = [];
+    transports.type = iconsWithLabel.get(type);
+    transports.tripCount = events
       .filter((event) => {
         return event.type === type;
       }).length;
-    return newObject;
+    return transports;
   })
     .filter((transport) => transport.tripCount !== 0);
   const tranportTripStatistics = [];
