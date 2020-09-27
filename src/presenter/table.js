@@ -61,6 +61,8 @@ export default class Table {
   createEvent() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._renderEventList(this._getEvents());
+
     this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction, this._eventsModel.getDestinations(), this._eventsModel.getOffers(), this._addNewEventButton);
     this._newEventPresenter.init();
   }
@@ -90,6 +92,14 @@ export default class Table {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
         this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.SAVING);
+        this._api.updateEvent(updatedItem).then((response) => {
+          this._eventsModel.updateEvent(updateType, response);
+        })
+        .catch(() => {
+          this._eventPresenter[updatedItem.id].setViewState(EventPresenterViewState.ABORTING);
+        });
+        break;
+      case UserAction.UPDATE_WITHOUT_RELOAD:
         this._api.updateEvent(updatedItem).then((response) => {
           this._eventsModel.updateEvent(updateType, response);
         })
@@ -196,7 +206,7 @@ export default class Table {
   }
 
   _renderEventList(events) {
-    render(this._tableContainer, this._eventListComponent, `beforeend`);
+    render(this._tableContainer, this._eventListComponent, `afterbegin`);
 
     let mapIndex = 0;
     events.forEach((value, key) => {
@@ -252,7 +262,8 @@ export default class Table {
       return;
     }
 
-    this._renderSort();
+
     this._renderEventList(this._getEvents());
+    this._renderSort();
   }
 }

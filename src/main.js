@@ -32,12 +32,16 @@ const handleSiteMenuClick = (menuItem) => {
       siteMenuComponent.setMenuItem(MenuItem.TABLE);
       break;
     case MenuItem.TABLE:
+      tablePresenter.destroy();
       tablePresenter.init();
       remove(statisticsComponent);
       siteMenuComponent.setMenuItem(MenuItem.TABLE);
       break;
     case MenuItem.STATISTICS:
       tablePresenter.destroy();
+      if (statisticsComponent !== null) {
+        return;
+      }
       statisticsComponent = new StaticsticsView(eventsModel.getEvents());
       render(siteMainElement, statisticsComponent, `beforeend`);
       siteMenuComponent.setMenuItem(MenuItem.STATISTICS);

@@ -139,8 +139,8 @@ export default class Event {
 
   _handleFavoriteClick() {
     this._changeData(
-        UserAction.UPDATE_EVENT,
-        UpdateType.PATCH_ONLY_THIS,
+        UserAction.UPDATE_WITHOUT_RELOAD,
+        UpdateType.PATCH_WITHOUT_RELOAD,
         Object.assign(
             this._event,
             {

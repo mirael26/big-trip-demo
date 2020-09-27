@@ -262,9 +262,9 @@ export default class EventEdit extends SmartView {
       .find((element) => {
         return element.title === targetOffer;
       });
-    if (this._data.offers.includes(newOffer)) {
+    if (this._data.offers.some((offer) => offer.title === newOffer.title)) {
       this._data.offers = this._data.offers.filter((offer) => {
-        return offer !== newOffer;
+        return offer.title !== newOffer.title;
       });
     } else {
       this._data.offers.push(newOffer);
