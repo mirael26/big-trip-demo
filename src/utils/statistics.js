@@ -69,12 +69,12 @@ const countTransportTrip = (events) => {
 const countTimeSpend = (events) => {
   const getDurationInHours = (startDate, endDate) => {
     const duration = endDate - startDate;
-    const d = moment.duration(duration).days();
-    let h = moment.duration(duration).hours();
-    if (!d === 0) {
-      h = d * 24 + h;
+    const days = moment.duration(duration).days();
+    let hours = moment.duration(duration).hours();
+    if (!days === 0) {
+      hours = days * 24 + hours;
     }
-    return h;
+    return hours;
   };
 
   const timeSpendStatistics = [];

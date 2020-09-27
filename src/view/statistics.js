@@ -9,13 +9,13 @@ export default class Statistics extends SmartView {
   constructor(events) {
     super();
 
-    this._data = events;
+    this._event = events;
     this._moneyChart = null;
     this._transportChart = null;
     this._timeSpendChart = null;
 
-    this._moneyStatistics = countMoneyByTypes(this._data);
-    this._transportTripCountStatistics = countTransportTrip(this._data);
+    this._moneyStatistics = countMoneyByTypes(this._event);
+    this._transportTripCountStatistics = countTransportTrip(this._event);
 
     this._setCharts();
   }
@@ -274,10 +274,10 @@ export default class Statistics extends SmartView {
 
     moneyCtx.height = BAR_HEIGHT * this._moneyStatistics.price.length;
     transportCtx.height = BAR_HEIGHT * this._transportTripCountStatistics.tripCounts.length;
-    timeSpendCtx.height = BAR_HEIGHT * this._data.length;
+    timeSpendCtx.height = BAR_HEIGHT * this._event.length;
 
     this._moneyChart = this._renderMoneyChart(moneyCtx);
     this._transportChart = this._renderTransportChart(transportCtx);
-    this._timeSpendChart = this._renderTimeSpendChart(timeSpendCtx, this._data);
+    this._timeSpendChart = this._renderTimeSpendChart(timeSpendCtx, this._event);
   }
 }

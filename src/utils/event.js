@@ -56,11 +56,11 @@ const formatTime = (date) => {
 
 const formatDuration = (startDate, endDate) => {
   const duration = endDate - startDate;
-  const d = moment.duration(duration).days();
-  const h = moment.duration(duration).hours();
-  const m = moment.duration(duration).minutes();
+  const days = moment.duration(duration).days();
+  const hours = moment.duration(duration).hours();
+  const minutes = moment.duration(duration).minutes();
 
-  return `${d ? `${d}D ` : ``}${h ? `${h}H ` : ``}${m ? `${m}M ` : ``}`;
+  return `${days ? `${days}D ` : ``}${hours ? `${hours}H ` : ``}${minutes ? `${minutes}M ` : ``}`;
 };
 
 const sortEventsByTime = (eventA, eventB) => {

@@ -4,9 +4,9 @@ import {getShortDate, getEventsInOrder} from "../utils/event.js";
 const MAX_DESTINATIONS_SHOW = 3;
 
 export default class TripInfo extends AbstractView {
-  constructor(eventsData) {
+  constructor(events) {
     super();
-    this._events = eventsData;
+    this._events = events;
   }
 
   _createRouteTemplate() {
