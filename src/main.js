@@ -3,7 +3,7 @@ import TablePresenter from "./presenter/table.js";
 import EventModel from "./model/event.js";
 import FilterModel from "./model/filter.js";
 import SiteMenuView from "./view/site-menu.js";
-import AddNewEventButton from "./view/addNewEventButton.js";
+import AddNewEventButton from "./view/add-new-event-button.js";
 import StaticsticsView from "./view/statistics.js";
 import {UpdateType} from "./const.js";
 import {render, remove} from "./utils/render.js";

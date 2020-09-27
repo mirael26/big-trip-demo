@@ -54,17 +54,17 @@ export const generateEvent = () => {
   const offersCount = getRandomInteger(OPTIONS_MIN, OPTIONS_MAX);
 
   const getOffers = (pointType) => {
-    const offersArray = [];
-    while (offersArray.length < offersCount) {
+    const offers = [];
+    while (offers.length < offersCount) {
       const newElement = getRandomElement(OFFERS.find((element) => {
         return element.type === pointType;
       }).offers);
-      if (!offersArray.includes(newElement)) {
-        offersArray.push(newElement);
+      if (!offers.includes(newElement)) {
+        offers.push(newElement);
       }
     }
 
-    return offersArray;
+    return offers;
   };
 
   const allEventTypes = EVENT_TYPES.transfer.concat(EVENT_TYPES.activity);

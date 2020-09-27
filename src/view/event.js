@@ -11,8 +11,8 @@ export default class Event extends AbstractView {
     this._editClickHandler = this._editClickHandler.bind(this);
   }
 
-  _createOffersTemplate(offersArray) {
-    return offersArray.slice(0, SHOW_OFFER_MAX).map((option) =>
+  _createOffersTemplate(offers) {
+    return offers.slice(0, SHOW_OFFER_MAX).map((option) =>
       `<li class="event__offer">
         <span class="event__offer-title">${option.title}</span>
         &plus;

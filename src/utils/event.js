@@ -14,8 +14,8 @@ const sortEventsByDays = (events) => {
     return day.toLocaleString(`en-US`, {year: `numeric`, month: `short`, day: `numeric`}).toUpperCase();
   };
 
-  const days = eventsInOrder.map((object) => {
-    return convertDay(object.startDate);
+  const days = eventsInOrder.map((day) => {
+    return convertDay(day.startDate);
   });
   const daysUniq = new Set(days);
 
