@@ -1,5 +1,5 @@
 import EventEditView from "../view/event-edit.js";
-import {remove, render} from "../utils/render.js";
+import {remove, render, RenderPosition} from "../utils/render.js";
 import {getCurrentDate} from "../utils/event.js";
 import {UserAction, UpdateType} from "../const.js";
 
@@ -42,7 +42,7 @@ export default class NewEvent {
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
-    render(this._eventListContainer, this._eventEditComponent, `afterbegin`);
+    render(this._eventListContainer, this._eventEditComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener(`keydown`, this._escKeyDownHandler);
     this._addNewEventButton.disabled = true;

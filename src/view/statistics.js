@@ -15,19 +15,20 @@ export default class Statistics extends SmartView {
     this._timeSpendChart = null;
 
     this._moneyStatistics = countMoneyByTypes(this._event);
-    this._transportTripCountStatistics = countTransportTrip(this._event);
+    this._transportStatistics = countTransportTrip(this._event);
+    this._timeSpendStatistics = countTimeSpend(this._event);
 
     this._setCharts();
   }
 
-  _renderMoneyChart(moneyCtx) {
-    return new Chart(moneyCtx, {
+  _renderChart(ctx, text, formatter, statisticsForLabels, statisticsForData) {
+    return new Chart(ctx, {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-        labels: this._moneyStatistics.types,
+        labels: statisticsForLabels,
         datasets: [{
-          data: this._moneyStatistics.price,
+          data: statisticsForData,
           backgroundColor: `#ffffff`,
           hoverBackgroundColor: `#ffffff`,
           anchor: `start`
@@ -42,148 +43,12 @@ export default class Statistics extends SmartView {
             color: `#000000`,
             anchor: `end`,
             align: `start`,
-            formatter: (val) => `€ ${val}`
+            formatter
           }
         },
         title: {
           display: true,
-          text: `MONEY`,
-          fontColor: `#000000`,
-          fontSize: 23,
-          position: `left`
-        },
-        scales: {
-          yAxes: [{
-            ticks: {
-              fontColor: `#000000`,
-              padding: 5,
-              fontSize: 13,
-            },
-            gridLines: {
-              display: false,
-              drawBorder: false
-            },
-            barThickness: 44,
-          }],
-          xAxes: [{
-            ticks: {
-              display: false,
-              beginAtZero: true,
-            },
-            gridLines: {
-              display: false,
-              drawBorder: false
-            },
-            minBarLength: 50
-          }],
-        },
-        legend: {
-          display: false
-        },
-        tooltips: {
-          enabled: false,
-        }
-      }
-    });
-  }
-
-  _renderTransportChart(transportCtx) {
-    return new Chart(transportCtx, {
-      plugins: [ChartDataLabels],
-      type: `horizontalBar`,
-      data: {
-        labels: this._transportTripCountStatistics.types,
-        datasets: [{
-          data: this._transportTripCountStatistics.tripCounts,
-          backgroundColor: `#ffffff`,
-          hoverBackgroundColor: `#ffffff`,
-          anchor: `start`
-        }]
-      },
-      options: {
-        plugins: {
-          datalabels: {
-            font: {
-              size: 13
-            },
-            color: `#000000`,
-            anchor: `end`,
-            align: `start`,
-            formatter: (val) => `${val}x`
-          }
-        },
-        title: {
-          display: true,
-          text: `TRANSPORT`,
-          fontColor: `#000000`,
-          fontSize: 23,
-          position: `left`
-        },
-        scales: {
-          yAxes: [{
-            ticks: {
-              fontColor: `#000000`,
-              padding: 5,
-              fontSize: 13,
-            },
-            gridLines: {
-              display: false,
-              drawBorder: false
-            },
-            barThickness: 44,
-          }],
-          xAxes: [{
-            ticks: {
-              display: false,
-              beginAtZero: true,
-            },
-            gridLines: {
-              display: false,
-              drawBorder: false
-            },
-            minBarLength: 50
-          }],
-        },
-        legend: {
-          display: false
-        },
-        tooltips: {
-          enabled: false,
-        }
-      }
-    });
-  }
-
-  _renderTimeSpendChart(timeSpendCtx, events) {
-    const eventsTimeSpendStatistics = countTimeSpend(events);
-
-    return new Chart(timeSpendCtx, {
-      plugins: [ChartDataLabels],
-      type: `horizontalBar`,
-      data: {
-        labels: eventsTimeSpendStatistics.points,
-        datasets: [{
-          data: eventsTimeSpendStatistics.time,
-          backgroundColor: `#ffffff`,
-          hoverBackgroundColor: `#ffffff`,
-          anchor: `start`
-        }]
-      },
-      options: {
-        plugins: {
-          datalabels: {
-            font: {
-              size: 13
-            },
-            color: `#000000`,
-            anchor: `end`,
-            align: `start`,
-            formatter: (val) => val < 1 ? `<1H` : `${val}H`
-          }
-        },
-        title: {
-          display: true,
-          text: `TIME SPEND`,
+          text,
           fontColor: `#000000`,
           fontSize: 23,
           position: `left`
@@ -273,11 +138,15 @@ export default class Statistics extends SmartView {
     const timeSpendCtx = this.getElement().querySelector(`.statistics__chart--time`);
 
     moneyCtx.height = BAR_HEIGHT * this._moneyStatistics.price.length;
-    transportCtx.height = BAR_HEIGHT * this._transportTripCountStatistics.tripCounts.length;
+    transportCtx.height = BAR_HEIGHT * this._transportStatistics.tripCounts.length;
     timeSpendCtx.height = BAR_HEIGHT * this._event.length;
 
-    this._moneyChart = this._renderMoneyChart(moneyCtx);
-    this._transportChart = this._renderTransportChart(transportCtx);
-    this._timeSpendChart = this._renderTimeSpendChart(timeSpendCtx, this._event);
+    const moneyFormatter = (val) => `€ ${val}`;
+    const transportFormatter = (val) => `${val}x`;
+    const timeSpendFormatter = (val) => val < 1 ? `<1H` : `${val}H`;
+
+    this._moneyChart = this._renderChart(moneyCtx, `MONEY`, moneyFormatter, this._moneyStatistics.types, this._moneyStatistics.price);
+    this._transportChart = this._renderChart(transportCtx, `TRANSPORT`, transportFormatter, this._transportStatistics.types, this._transportStatistics.tripCounts);
+    this._timeSpendChart = this._renderChart(timeSpendCtx, `TIME SPEND`, timeSpendFormatter, this._timeSpendStatistics.points, this._timeSpendStatistics.time);
   }
 }

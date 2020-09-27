@@ -6,7 +6,7 @@ import EventDayListView from "../view/event-day-list.js";
 import NoEventsView from "../view/no-events.js";
 import EventPresenter, {State as EventPresenterViewState} from "./event.js";
 import NewEventPresenter from "./new-event.js";
-import {render, remove} from "../utils/render.js";
+import {render, remove, RenderPosition} from "../utils/render.js";
 import {sortEventsByDays, sortEventsByTime, sortEventsByPrice} from "../utils/event.js";
 import {SortType, UserAction, UpdateType, FilterType} from "../const.js";
 import {filter} from "../utils/filter.js";
@@ -188,7 +188,7 @@ export default class Table {
     this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
 
-    render(this._tableContainer, this._sortComponent, `afterbegin`);
+    render(this._tableContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderEvent(eventList, event) {
@@ -198,26 +198,26 @@ export default class Table {
   }
 
   _renderLoading() {
-    render(this._tableContainer, this._loadingComponent, `afterbegin`);
+    render(this._tableContainer, this._loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderNoEvents() {
-    render(this._tableContainer, this._noEventsComponent, `afterbegin`);
+    render(this._tableContainer, this._noEventsComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderEventList(events) {
-    render(this._tableContainer, this._eventListComponent, `afterbegin`);
+    render(this._tableContainer, this._eventListComponent, RenderPosition.AFTERBEGIN);
 
     let mapIndex = 0;
     events.forEach((value, key) => {
       mapIndex++;
       const eventDayComponent = new EventDayView(key, mapIndex);
       this._eventDayComponents.push(eventDayComponent);
-      render(this._eventListComponent, eventDayComponent, `beforeend`);
+      render(this._eventListComponent, eventDayComponent, RenderPosition.BEFOREEND);
 
       const eventDayListComponent = new EventDayListView();
       this._eventDayListComponents.push(eventDayListComponent);
-      render(eventDayComponent, eventDayListComponent, `beforeend`);
+      render(eventDayComponent, eventDayListComponent, RenderPosition.BEFOREEND);
 
       value.forEach((event) => {
         this._renderEvent(eventDayListComponent.getElement(), event);

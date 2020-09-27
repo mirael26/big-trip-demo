@@ -277,12 +277,13 @@ export default class EventEdit extends SmartView {
 
   _destinationChangeHandler(evt) {
     evt.preventDefault();
+    const currentDestination = this._destinationsList.find((destination) => evt.target.value === destination.name);
 
     this.updateData({
       destination: evt.target.value,
       destinationInfo: {
-        description: this._destinationsList.find((destination) => evt.target.value === destination.name).description,
-        photo: this._destinationsList.find((destination) => evt.target.value === destination.name).pictures
+        description: currentDestination.description,
+        photo: currentDestination.pictures
       },
       isDestination: evt.target.value ? true : false
     });

@@ -1,6 +1,6 @@
 import EventView from "../view/event.js";
 import EventEditView from "../view/event-edit.js";
-import {render, replace, remove} from "../utils/render.js";
+import {render, replace, remove, RenderPosition} from "../utils/render.js";
 import {UserAction, UpdateType} from "../const.js";
 
 const Mode = {
@@ -50,7 +50,7 @@ export default class Event {
     this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
-      render(this._eventListContainer, this._eventComponent, `beforeend`);
+      render(this._eventListContainer, this._eventComponent, RenderPosition.BEFOREEND);
       return;
     }
 

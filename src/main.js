@@ -6,11 +6,11 @@ import SiteMenuView from "./view/site-menu.js";
 import AddNewEventButton from "./view/add-new-event-button.js";
 import StaticsticsView from "./view/statistics.js";
 import {UpdateType} from "./const.js";
-import {render, remove} from "./utils/render.js";
+import {render, remove, RenderPosition} from "./utils/render.js";
 import Api from "./api.js";
 import {MenuItem} from "./const.js";
 
-const AUTHORIZATION = `Basic sr68h4684aef4`;
+const AUTHORIZATION = `Basic sr68h4684aef40`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const siteHeaderElement = document.querySelector(`.trip-main`);
@@ -42,7 +42,7 @@ const handleSiteMenuClick = (menuItem) => {
       tablePresenter.destroy();
       remove(statisticsComponent);
       statisticsComponent = new StaticsticsView(eventsModel.getEvents());
-      render(siteMainElement, statisticsComponent, `beforeend`);
+      render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
       siteMenuComponent.setMenuItem(MenuItem.STATISTICS);
       addNewEventButtonComponent.getElement().disabled = false;
       break;
@@ -54,10 +54,10 @@ headerPresenter.init();
 const tripControlsElement = siteHeaderElement.querySelector(`.trip-main__trip-controls`);
 
 const siteMenuComponent = new SiteMenuView();
-render(tripControlsElement, siteMenuComponent, `afterbegin`);
+render(tripControlsElement, siteMenuComponent, RenderPosition.AFTERBEGIN);
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 const addNewEventButtonComponent = new AddNewEventButton();
-render(siteHeaderElement, addNewEventButtonComponent, `beforeend`);
+render(siteHeaderElement, addNewEventButtonComponent, RenderPosition.BEFOREEND);
 addNewEventButtonComponent.setMenuClickHandler(handleSiteMenuClick);
 
 

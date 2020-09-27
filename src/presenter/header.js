@@ -2,7 +2,7 @@ import TripInfoView from "../view/trip-info.js";
 import TripControlsView from "../view/trip-controls.js";
 import SiteMenuView from "../view/site-menu.js";
 import FilterView from "../view/filter.js";
-import {render, remove} from "../utils/render.js";
+import {render, remove, RenderPosition} from "../utils/render.js";
 import {UpdateType} from "../const.js";
 
 export default class Header {
@@ -67,7 +67,7 @@ export default class Header {
     }
 
     this._tripInfoComponent = new TripInfoView(this._getEvents());
-    render(this._headerContainer, this._tripInfoComponent, `afterbegin`);
+    render(this._headerContainer, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
   }
 
   _clearTripInfo() {
@@ -75,7 +75,7 @@ export default class Header {
   }
 
   _renderSiteMenu() {
-    render(this._tripControlsComponent, this._siteMenuComponent, `beforeend`);
+    render(this._tripControlsComponent, this._siteMenuComponent, RenderPosition.BEFOREEND);
   }
 
   _renderFilter() {
@@ -83,7 +83,7 @@ export default class Header {
       remove(this._filterComponent);
     }
     this._filterComponent = new FilterView(this._filterModel.getFilter());
-    render(this._tripControlsComponent, this._filterComponent, `beforeend`);
+    render(this._tripControlsComponent, this._filterComponent, RenderPosition.BEFOREEND);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
   }
 
@@ -92,7 +92,7 @@ export default class Header {
   }
 
   _renderTripControls() {
-    render(this._headerContainer, this._tripControlsComponent, `afterbegin`);
+    render(this._headerContainer, this._tripControlsComponent, RenderPosition.AFTERBEGIN);
     this._renderFilter();
   }
 
