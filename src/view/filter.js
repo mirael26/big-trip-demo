@@ -1,19 +1,22 @@
 import AbstractView from "./abstract.js";
 import {capitalizeFirst} from "../utils/common.js";
 import {FilterType} from "../const.js";
+import {filter} from "../utils/filter.js";
 
 export default class Filter extends AbstractView {
-  constructor(currentFilter) {
+  constructor(checkedFilter, eventsModel) {
     super();
-    this._currentFilter = currentFilter;
+    this._events = eventsModel.getEvents();
+    this._checkedFilter = checkedFilter;
 
     this._filterTypeChangeHandler = this._filterTypeChangeHandler.bind(this);
   }
 
-  _createFilterItemTemplate(filter, currentFilter) {
+  _createFilterItemTemplate(currentFilter, checkedFilter) {
+    const isDisabled = !filter[currentFilter](this._events).length > 0;
     return `<div class="trip-filters__filter">
-    <input id="filter-${filter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${filter}"${filter === currentFilter ? ` checked` : ``}>
-    <label class="trip-filters__filter-label" for="filter-${filter}">${capitalizeFirst(filter)}</label>
+    <input id="filter-${currentFilter}" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="${currentFilter}"${currentFilter === checkedFilter ? ` checked` : ``}${isDisabled ? ` disabled` : ``}>
+    <label class="trip-filters__filter-label" for="filter-${currentFilter}">${capitalizeFirst(currentFilter)}</label>
   </div>`;
   }
 
@@ -25,8 +28,8 @@ export default class Filter extends AbstractView {
       <form class="trip-filters" action="#" method="get">
         ${Object
           .values(FilterType)
-          .map((filter) => {
-            return this._createFilterItemTemplate(filter, this._currentFilter);
+          .map((currentFilter) => {
+            return this._createFilterItemTemplate(currentFilter, this._checkedFilter);
           }).join(``)}
         <button class="visually-hidden" type="submit">Accept filter</button>
       </form>

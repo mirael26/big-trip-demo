@@ -41,6 +41,8 @@ export default class Header {
       case UpdateType.MINOR:
         this._clearTripInfo();
         this._renderTripInfo();
+        this._clearFilter();
+        this._renderFilter();
         break;
       case UpdateType.MAJOR:
         this._clearFilter();
@@ -82,7 +84,7 @@ export default class Header {
     if (this._filterComponent !== null) {
       remove(this._filterComponent);
     }
-    this._filterComponent = new FilterView(this._filterModel.getFilter());
+    this._filterComponent = new FilterView(this._filterModel.getFilter(), this._eventsModel);
     render(this._tripControlsComponent, this._filterComponent, RenderPosition.BEFOREEND);
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
   }
@@ -93,7 +95,6 @@ export default class Header {
 
   _renderTripControls() {
     render(this._headerContainer, this._tripControlsComponent, RenderPosition.AFTERBEGIN);
-    this._renderFilter();
   }
 
   _renderHeader() {
@@ -102,6 +103,8 @@ export default class Header {
     if (this._isLoading) {
       return;
     }
+
+    this._renderFilter();
     this._renderTripInfo();
   }
 }
