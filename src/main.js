@@ -36,15 +36,15 @@ const handleSiteMenuClick = (menuItem) => {
       tablePresenter.init();
       remove(statisticsComponent);
       siteMenuComponent.setMenuItem(MenuItem.TABLE);
+      addNewEventButtonComponent.getElement().disabled = false;
       break;
     case MenuItem.STATISTICS:
       tablePresenter.destroy();
-      if (statisticsComponent !== null) {
-        return;
-      }
+      remove(statisticsComponent);
       statisticsComponent = new StaticsticsView(eventsModel.getEvents());
       render(siteMainElement, statisticsComponent, `beforeend`);
       siteMenuComponent.setMenuItem(MenuItem.STATISTICS);
+      addNewEventButtonComponent.getElement().disabled = false;
       break;
   }
 };
