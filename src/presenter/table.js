@@ -61,7 +61,10 @@ export default class Table {
   createEvent() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._renderEventList(this._getEvents());
+
+    if (this._getEvents().length === 0) {
+      this._renderEventList(this._getEvents());
+    }
 
     this._newEventPresenter = new NewEventPresenter(this._eventListComponent, this._handleViewAction, this._eventsModel.getDestinations(), this._eventsModel.getOffers(), this._addNewEventButton);
     this._newEventPresenter.init();
