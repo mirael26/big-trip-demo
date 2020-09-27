@@ -29,12 +29,12 @@ export default class SiteMenu extends AbstractView {
   }
 
   setMenuItem(menuItem) {
-    const item = this.getElement().querySelector(`[id=${menuItem}]`);
-    const checkedItem = this.getElement().querySelector(`.trip-tabs__btn--active`);
-    if (item === checkedItem) {
+    const menuElement = this.getElement().querySelector(`[id=${menuItem}]`);
+    const checkedMenuElement = this.getElement().querySelector(`.trip-tabs__btn--active`);
+    if (menuElement === checkedMenuElement) {
       return;
     }
-    checkedItem.classList.remove(`trip-tabs__btn--active`);
-    item.classList.add(`trip-tabs__btn--active`);
+    checkedMenuElement.classList.remove(`trip-tabs__btn--active`);
+    menuElement.classList.add(`trip-tabs__btn--active`);
   }
 }
