@@ -17,9 +17,9 @@ const BLANK_EVENT = {
 };
 
 export default class EventEdit extends SmartView {
-  constructor(event = BLANK_EVENT, destinations, offers) {
+  constructor(eventOriginal = BLANK_EVENT, destinations, offers) {
     super();
-    this._event = EventEdit.parseEventToData(event);
+    this._event = EventEdit.parseEventToData(eventOriginal);
     this._datepicker = null;
     this._destinationsList = destinations;
     this._offersList = offers;
@@ -326,6 +326,7 @@ export default class EventEdit extends SmartView {
 
   _favoriteClickHandler(evt) {
     evt.preventDefault();
+    this._event.isFavorite = !this._event.isFavorite;
     this._callback.favoriteClick();
   }
 
